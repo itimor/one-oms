@@ -1,0 +1,10 @@
+Django==2.2.7
+django-cors-headers==2.4.0
+django-filter==2.0.0
+django-rest-auth==0.9.5
+django-uuslug==1.1.8
+djangorestframework==3.10.2
+djangorestframework-jwt==1.11.0
+PyJWT==1.7.1
+python-slugify==3.0.3
+requests==2.22.0

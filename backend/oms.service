@@ -1,0 +1,13 @@
+[Unit]
+Description=uWSGI instance to serve one-oms
+
+[Service]
+ExecStartPre=/bin/bash -c 'mkdir -p /run/uwsgi; chown oms:www /run/uwsgi'
+ExecStart=/bin/bash -c 'cd /opt/projects/one-oms/backend; /root/.pyenv/versions/envoms/bin/uwsgi --ini one-oms.ini --touch-reload=/etc/nginx/uwsgi_params'
+Restart=on-failure
+KillSignal=SIGQUIT
+Type=notify
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target
