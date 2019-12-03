@@ -56,13 +56,14 @@ class User(AbstractBaseUser):
 
 
 class Role(models.Model):
-    parent_id = models.SmallIntegerField(default=0, verbose_name=u'父级ID')
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, default='1', verbose_name=u'父级角色')
     name = models.CharField(max_length=32, unique=True, verbose_name=u'角色')
     sequence = models.SmallIntegerField(default=0, verbose_name=u'排序值')
+    menus = models.ManyToManyField('Menu', blank=True, verbose_name=u'菜单')
     desc = models.TextField(blank=True, verbose_name=u'备注')
 
     def __str__(self):
-        return self.name
+        return "{parent}{name}".format(name=self.name, parent="%s-->" % self.parent.name if self.parent else '')
 
     class Meta:
         verbose_name = u'角色'
@@ -90,10 +91,13 @@ operate_type = (
 
 
 class Menu(models.Model):
-    parent_id = models.SmallIntegerField(default=0, verbose_name=u'父级ID')
-    name = models.CharField(max_length=32, unique=True, verbose_name=u'菜单名称')
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, default='1', verbose_name=u'父级菜单')
+    name = models.CharField(max_length=32, verbose_name=u'菜单名称')
     code = models.CharField(max_length=32, verbose_name=u'菜单代码')
     curl = models.CharField(max_length=101, verbose_name=u'菜单URL')
+    icon = models.CharField(max_length=32, verbose_name=u'菜单图标')
+    hidden = models.BooleanField(default=False, verbose_name=u'菜单是否隐藏')
+    affix = models.BooleanField(default=True, verbose_name=u'是否显示tags-view')
     sequence = models.SmallIntegerField(default=0, verbose_name=u'排序值')
     type = models.CharField(max_length=1, choices=menu_type, default='2', verbose_name=u'菜单类型')
     status = models.CharField(max_length=1, choices=menu_status, default='1', verbose_name=u'菜单状态')
@@ -101,7 +105,7 @@ class Menu(models.Model):
     desc = models.TextField(blank=True, verbose_name=u'备注')
 
     def __str__(self):
-        return self.name
+        return "{parent}{name}".format(name=self.name, parent="%s-->" % self.parent.name if self.parent else '')
 
     class Meta:
         verbose_name = u'角色'

@@ -154,6 +154,7 @@ JWT_AUTH = {
 
 # user model
 AUTH_USER_MODEL = "systems.User"
+SUPER_ADMIN_USER = 'admin'
 
 CORS_ORIGIN_ALLOW_ALL = True
 

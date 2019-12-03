@@ -10,15 +10,18 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     search_fields = ['username']
     filter_fields = ['username']
+    ordering_fields = ['username']
 
 
 class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
     filter_fields = ['name']
+    ordering_fields = ['parent_id', 'sequence']
 
 
 class MenuViewSet(viewsets.ModelViewSet):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
     filter_fields = ['name']
+    ordering_fields = ['parent_id', 'sequence']
