@@ -51,10 +51,11 @@ def get_menus_by_user(user):
 
     for item in user_menu_list:
         menu_info = Menu.objects.get(id=item['menus'])
-        if menu_info.parent in menuMap:
+        if menu_info.parent_id in menuMap:
             continue
         user_menus = find_menu_daddy(menu_info.parent_id, menuMap)
-    return list(user_menus.values())
+    menus = [user_menus[i] for i in sorted(user_menus.keys())]
+    return menus
 
 
 def find_menu_daddy(menuid, menuMap):
@@ -68,15 +69,20 @@ def find_menu_daddy(menuid, menuMap):
 
 
 def set_menu(menus, parent_id):
+    amenus = [i for i in menus if i.parent_id == parent_id]
+
+    if len(amenus) == 0:
+        return []
+
     nocache = False
     all_menus = []
-    len(menus)
-    for item in menus:
+    for item in amenus:
         menu = {
             'path': item.curl,
             'component': item.code,
             'name': item.code,
-            'meta': {'title': item.name, 'icon': item.icon, 'nocache': nocache},
+            'hidden': item.hidden,
+            'meta': {'title': item.name, 'icon': item.icon, 'nocache': nocache, 'affix': item.affix},
             'children': []
         }
         if item.type == 3:
