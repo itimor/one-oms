@@ -67,17 +67,14 @@ def get_menus_by_user(user):
         menu_info = Menu.objects.get(id=item['menus'])
         if menu_info.parent in menuMap:
             continue
-        aaa = setMenuUp(menuMapAll, menu_info.parent, menuMap)
+        aaa = setMenuUp(menuMapAll, menu_info.parent_id, menuMap)
         print(aaa)
-
-    return aaa
+    return {1:2}
 
 def setMenuUp(menuMapAll, menuid, menuMap):
     if menuid in menuMapAll:
         mid = menuMapAll[menuid].id
-        print(mid)
         if mid not in menuMap:
             menuMap[mid] = menuMapAll[menuid]
-            return setMenuUp(menuMapAll, menuMapAll[menuid].parent, menuMap)
-        else:
+            setMenuUp(menuMapAll, menuMapAll[menuid].parent_id, menuMap)
             return menuMap
