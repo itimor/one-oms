@@ -39,15 +39,20 @@ class getmenubutons(APIView):
         ret = {'code': 1000, 'msg': "成功", 'data': []}
         try:
             user = request.user
-            menucode = request.GET['menucode']
-
-            match_menu = Menu.objects.get(code=menucode)
-
-            data = get_menus_by_user(user)
+            user_obj = User.objects.get(username=user)
             buttons = []
-            for item in data:
-                if item.parent_id == match_menu.id:
-                    buttons.append(item.operate)
+
+            if user_obj.is_admin:
+                buttons = ['add', 'del', 'update', 'view']
+            else:
+                menucode = request.GET['menucode']
+
+                match_menu = Menu.objects.get(code=menucode)
+
+                data = get_menus_by_user(user)
+                for item in data:
+                    if item.parent_id == match_menu.id:
+                        buttons.append(item.operate)
 
             ret['data'] = buttons
         except exceptions as e:

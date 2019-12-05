@@ -97,7 +97,6 @@ class Menu(models.Model):
     curl = models.CharField(max_length=101, verbose_name=u'菜单URL')
     icon = models.CharField(max_length=32, verbose_name=u'菜单图标')
     hidden = models.BooleanField(default=False, verbose_name=u'菜单是否隐藏')
-    affix = models.BooleanField(default=True, verbose_name=u'是否显示tags-view')
     sequence = models.SmallIntegerField(default=0, verbose_name=u'排序值')
     type = models.CharField(max_length=1, choices=menu_type, default='2', verbose_name=u'菜单类型')
     status = models.CharField(max_length=1, choices=menu_status, default='1', verbose_name=u'菜单状态')

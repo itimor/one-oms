@@ -14,14 +14,10 @@ def get_menus_by_user(user):
             topmenu = Menu.objects.create(name='top', code='top', curl='/top', icon='top', sequence=0, type=1, parent_id=None)
             sysmenu = Menu.objects.create(name='系统管理', code='sys', curl='/sys', icon='sys', sequence=1, type=1, parent_id=topmenu.id)
             menu_list = [
-                {"name": "用户管理", "code": "user", "curl": "/user", "icon": "user", "sequence": 10,
-                 "parent_id": sysmenu.id},
-                {"name": "角色管理", "code": "role", "curl": "/role", "icon": "role", "sequence": 20,
-                 "parent_id": sysmenu.id},
-                {"name": "菜单管理", "code": "menu", "curl": "/menu", "icon": "menu", "sequence": 30,
-                 "parent_id": sysmenu.id},
-                {"name": "图标管理", "code": "icon", "curl": "/icon", "icon": "icon", "sequence": 40,
-                 "parent_id": sysmenu.id},
+                {"name": "用户管理", "code": "user", "curl": "/user", "icon": "user", "sequence": 10, "parent_id": sysmenu.id},
+                {"name": "角色管理", "code": "role", "curl": "/role", "icon": "role", "sequence": 20, "parent_id": sysmenu.id},
+                {"name": "菜单管理", "code": "menu", "curl": "/menu", "icon": "menu", "sequence": 30, "parent_id": sysmenu.id},
+                {"name": "图标管理", "code": "icon", "curl": "/icon", "icon": "icon", "sequence": 40, "parent_id": sysmenu.id},
             ]
 
             menu_models = []
@@ -72,7 +68,7 @@ def set_menu(menus, parent_id):
             'component': item.code,
             'name': item.code,
             'hidden': item.hidden,
-            'meta': {'title': item.name, 'icon': item.icon, 'nocache': nocache, 'affix': item.affix},
+            'meta': {'title': item.name, 'icon': item.icon, 'nocache': nocache},
             'children': []
         }
         if item.type == 3:

@@ -14,11 +14,11 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
                   url(r'^api/', include(router.urls)),
 
                   # 用户信息
-                  url(r'api/systems/', include(('systems.urls', 'systems'), namespace="systems")),
-                  url(r'^api/user/changepasswd/', PasswordChangeView.as_view(), name='changepasswd'),
+                  url(r'api/sys/', include(('systems.urls', 'systems'), namespace="systems")),
+                  url(r'^api/sys/changepwd/', PasswordChangeView.as_view(), name='changepwd'),
 
                   # token认证
-                  url(r'^api/jwt-token-auth/', jwt_token, name='rest_framework_token'),
+                  url(r'^api/sys/jwt-token-auth/', jwt_token, name='rest_framework_token'),
                   url(r'^api/api-token-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
                   # 静态模板
