@@ -3,6 +3,7 @@
 
 from systems.models import *
 from rest_framework import serializers
+from systems.menus import init_menu
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,14 +14,14 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         roles = validated_data.pop('roles')
-        user = User.objects.create(**validated_data)
-        user.roles.set(roles)
+        obj = User.objects.create(**validated_data)
+        obj.roles.set(roles)
         try:
-            user.set_password(validated_data['password'])
+            obj.set_password(validated_data['password'])
         except:
             pass
-        user.save()
-        return user
+        obj.save()
+        return obj
 
     def update(self, instance, validated_data):
         roles = validated_data.pop('roles')
@@ -47,3 +48,11 @@ class MenuSerializer(serializers.ModelSerializer):
     class Meta:
         model = Menu
         fields = '__all__'
+
+    def create(self, validated_data):
+        obj = Menu.objects.create(**validated_data)
+        obj.save()
+
+        if obj.type == 2:
+            init_menu(obj)
+        return obj

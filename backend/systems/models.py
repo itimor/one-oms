@@ -95,7 +95,7 @@ class Menu(models.Model):
     name = models.CharField(max_length=32, verbose_name=u'菜单名称')
     code = models.CharField(max_length=32, verbose_name=u'菜单代码')
     curl = models.CharField(max_length=101, verbose_name=u'菜单URL')
-    icon = models.CharField(max_length=32, verbose_name=u'菜单图标')
+    icon = models.CharField(max_length=32, blank=True, verbose_name=u'菜单图标')
     hidden = models.BooleanField(default=False, verbose_name=u'菜单是否隐藏')
     sequence = models.SmallIntegerField(default=0, verbose_name=u'排序值')
     type = models.CharField(max_length=1, choices=menu_type, default='2', verbose_name=u'菜单类型')
