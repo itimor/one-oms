@@ -18,7 +18,6 @@ class getuserinfo(APIView):
             user_obj = User.objects.get(username=user)
 
             data = get_menus_by_user(user)
-            print(data)
 
             if len(data) > 0:
                 topmenuid = data[0].parent_id
@@ -26,7 +25,7 @@ class getuserinfo(APIView):
                     topmenuid = data[0].id
 
             menus = set_menu(data, topmenuid)
-            ret['data'] = {'menus': menus, 'realname': user_obj.realname, 'avatar': user_obj.avator}
+            ret['data'] = {'menus': menus, 'realname': user_obj.realname, 'avatar': user_obj.avatar}
         except exceptions as e:
             ret['code'] = 1002
             ret['msg'] = "请求异常"

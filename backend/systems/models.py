@@ -33,7 +33,7 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser):
     username = models.CharField(max_length=32, unique=True, db_index=True)
     realname = models.CharField(max_length=32, blank=True, verbose_name=u'真实名字')
-    avator = models.CharField(max_length=255, default='http://m.imeitou.com/uploads/allimg/2017110610/b3c433vwhsk.jpg')
+    avatar = models.CharField(max_length=255, default='http://m.imeitou.com/uploads/allimg/2017110610/b3c433vwhsk.jpg')
     roles = models.ManyToManyField('Role', blank=True, verbose_name=u'角色')
     create_date = models.DateField(auto_now_add=True, verbose_name=u'创建时间')
     is_active = models.BooleanField(default=True)
