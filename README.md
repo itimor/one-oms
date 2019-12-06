@@ -15,3 +15,14 @@ cd frontend
 npm install
 npm run dev
 ```
+
+## 相关权限菜单设置截图
+
+### 新建 test 用户，并设置角色
+![user](gifs/user.png)
+
+### 编辑 test 角色，并关联菜单
+![role](gifs/role.png)
+
+### 登录 test 用户，查看权限
+![menu](gifs/menu.png)

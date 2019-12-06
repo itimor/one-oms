@@ -130,7 +130,7 @@
             inactive-color="#ff4949">
           </el-switch>
         </el-form-item>
-        <el-form-item label="用户分组" prop="roles">
+        <el-form-item label="用户角色" prop="roles">
           <el-tree
             ref="tree"
             :check-strictly="false"
