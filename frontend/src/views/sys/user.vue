@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="filter-container">
       <el-input
-        v-model="listQuery.key"
+        v-model="listQuery.search"
         placeholder="请输入内容"
         clearable
         prefix-icon="el-icon-search"
@@ -41,7 +41,7 @@
       </el-button-group>
     </div>
     
-    <el-table :data="list" v-loading="listLoading" border style="width: 100%" highlight-current-row @sort-change="sortChange"
+    <el-table :data="list" v-loading="listLoading" border style="width: 100%" highlight-current-row @sort-change="handleSortChange"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"/>
       <el-table-column label="用户名" prop="username"></el-table-column>
@@ -84,7 +84,7 @@
       <pagination
         v-show="total > 0"
         :total="total"
-        :page.sync="listQuery.page"
+        :page.sync="listQuery.offset"
         :limit.sync="listQuery.limit"
         @pagination="getList"
       />
@@ -120,18 +120,6 @@
         <el-form-item label="真实姓名" prop="realname">
           <el-input v-model="temp.realname"/>
         </el-form-item>
-        <el-form-item label="用户分组" prop="roles">
-          <el-tree
-            ref="tree"
-            :check-strictly="false"
-            :data="treeData"
-            :props="treeProps"
-            show-checkbox
-            default-expand-all
-            node-key="id"
-            class="permission-tree"
-          />
-        </el-form-item>
         <el-form-item label="头像" prop="avatar">
           <el-input v-model="temp.avatar"/>
         </el-form-item>
@@ -142,8 +130,18 @@
             inactive-color="#ff4949">
           </el-switch>
         </el-form-item>
-        <el-form-item label="备注" prop="memo">
-          <el-input v-model="temp.memo"/>
+        <el-form-item label="用户分组" prop="roles">
+          <el-tree
+            ref="tree"
+            :check-strictly="false"
+            :data="treeData"
+            :props="treeProps"
+            show-checkbox
+            accordion
+            default-expand-all
+            node-key="id"
+            class="permission-tree"
+          />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -175,19 +173,17 @@
           add: false,
           del: false,
           view: false,
-          update: false,
-          setadminrole: false
+          update: false
         },
-        tableKey: 0,
         list: [],
         total: 0,
         listLoading: true,
         loading: true,
         listQuery: {
-          page: 1,
+          offset: 1,
           limit: 20,
-          key: undefined,
-          is_active: undefined
+          search: undefined,
+          ordering: undefined
         },
         temp: {},
         dialogFormVisible: false,
@@ -201,14 +197,11 @@
           password: [{min: 6, max: 20, required: true, message: '长度在 6 到 20 个字符', trigger: 'blur'}]
         },
         multipleSelection: [],
-        dialogFormVisibleSetRole: false,
-        dialogFormVisibleSetRoleTitle: '',
         treeProps: {
           children: 'children',
-          label: 'name'
+          label: 'memo'
         },
         treeData: [],
-        roles: []
       }
     },
     created() {
@@ -239,19 +232,17 @@
         })
       },
       handleFilter() {
-        this.listQuery.page = 1
         this.getList()
       },
-      sortChange(data) {
-        const {prop, order} = data
-        if (order === 'ascending') {
-          this.listQuery.sort = '+' + prop
-        } else if (order === 'descending') {
-          this.listQuery.sort = '-' + prop
+      handleSortChange(val) {
+        if (val.order === 'ascending') {
+          this.listQuery.ordering = val.prop
+        } else if (val.order === 'descending') {
+          this.listQuery.ordering = '-' + val.prop
         } else {
-          this.listQuery.sort = undefined
+          this.listQuery.ordering = ''
         }
-        this.handleFilter()
+        this.getList()
       },
       resetTemp() {
         this.temp = {
@@ -260,7 +251,6 @@
           realname: '',
           avatar: 'http://m.imeitou.com/uploads/allimg/2017110610/b3c433vwhsk.jpg',
           roles: [],
-          memo: '',
           is_active: true
         }
       },
@@ -353,26 +343,16 @@
           })
           return
         }
-        var ids = []
-        for (const v of this.multipleSelection) {
-          ids.push(v.id)
-        }
         this.$confirm('是否确定删除?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          requestDelete(ids).then(() => {
-            this.$message({
-              message: '删除成功',
-              type: 'success'
+          for (const v of this.multipleSelection) {
+            requestDelete(v).then(() => {
+              this.getList()
             })
-            for (const row of this.multipleSelection) {
-              this.total = this.total - 1
-              const index = this.list.indexOf(row)
-              this.list.splice(index, 1)
-            }
-          })
+          }
         }).catch(() => {
           this.$message({
             type: 'info',

@@ -60,7 +60,7 @@ class Role(models.Model):
     name = models.CharField(max_length=32, unique=True, verbose_name=u'角色')
     sequence = models.SmallIntegerField(default=0, verbose_name=u'排序值')
     menus = models.ManyToManyField('Menu', blank=True, verbose_name=u'菜单')
-    desc = models.TextField(blank=True, verbose_name=u'备注')
+    memo = models.TextField(blank=True, verbose_name=u'备注')
 
     def __str__(self):
         return "{parent}{name}".format(name=self.name, parent="%s-->" % self.parent.name if self.parent else '')
@@ -71,22 +71,17 @@ class Role(models.Model):
 
 
 menu_type = (
-    ('1', '模块'),
-    ('2', '菜单'),
-    ('3', '操作'),
-)
-
-menu_status = (
-    ('1', '启用'),
-    ('2', '禁用'),
+    (1, '模块'),
+    (2, '菜单'),
+    (3, '操作'),
 )
 
 operate_type = (
     ('none', '无'),
-    ('add', '增'),
-    ('del', '删'),
-    ('update', '改'),
-    ('view', '查'),
+    ('add', '新增'),
+    ('del', '删除'),
+    ('update', '编辑'),
+    ('view', '查看'),
 )
 
 
@@ -98,10 +93,10 @@ class Menu(models.Model):
     icon = models.CharField(max_length=32, blank=True, verbose_name=u'菜单图标')
     hidden = models.BooleanField(default=False, verbose_name=u'菜单是否隐藏')
     sequence = models.SmallIntegerField(default=0, verbose_name=u'排序值')
-    type = models.CharField(max_length=1, choices=menu_type, default='2', verbose_name=u'菜单类型')
-    status = models.CharField(max_length=1, choices=menu_status, default='1', verbose_name=u'菜单状态')
-    operate = models.CharField(max_length=1, choices=operate_type, default='none', verbose_name=u'操作类型')
-    desc = models.TextField(blank=True, verbose_name=u'备注')
+    type = models.CharField(max_length=1, choices=menu_type, default=2, verbose_name=u'菜单类型')
+    status = models.BooleanField(default=True, verbose_name=u'状态')
+    operate = models.CharField(max_length=5, choices=operate_type, default='none', verbose_name=u'操作类型')
+    memo = models.TextField(blank=True, verbose_name=u'备注')
 
     def __str__(self):
         return "{parent}{name}".format(name=self.name, parent="%s-->" % self.parent.name if self.parent else '')
