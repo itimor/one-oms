@@ -33,7 +33,7 @@ export default function checkPermission(value) {
 export function checkAuth(arr, value) {
   const permissionarr = arr
   const permissionvalue = value
-  const hasPermission = permissionarr.includes(permissionvalue)
+  const hasPermission = permissionarr.indexOf(permissionvalue)
   if (!hasPermission) {
     return false
   }
