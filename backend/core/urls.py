@@ -22,5 +22,5 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
                   url(r'^api/api-token-auth/', include('rest_framework.urls', namespace='rest_framework')),
 
                   # 静态模板
-                  #url(r'', TemplateView.as_view(template_name="index.html")),
+                  url(r'', TemplateView.as_view(template_name="index.html")),
               ]
