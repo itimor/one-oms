@@ -180,7 +180,7 @@
   import {checkAuthAdd, checkAuthDel, checkAuthView, checkAuthUpdate} from '@/utils/permission'
   
   export default {
-    name: 'user',
+    name: 'menu',
     
     filters: {
       menuTypeFilter(val) {
@@ -287,7 +287,7 @@
         this.permissionList.update = checkAuthUpdate(this.operationList)
       },
       getMenuButton() {
-        requestMenuButton('user').then(response => {
+        requestMenuButton('menu').then(response => {
           this.operationList = response.data
         }).then(() => {
           this.checkPermission()

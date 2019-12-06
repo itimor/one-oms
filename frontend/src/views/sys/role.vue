@@ -143,7 +143,7 @@
   import {checkAuthAdd, checkAuthDel, checkAuthView, checkAuthUpdate} from '@/utils/permission'
   
   export default {
-    name: 'user',
+    name: 'role',
     components: {Pagination, SelectTree},
     data() {
       return {
@@ -217,7 +217,7 @@
         this.permissionList.update = checkAuthUpdate(this.operationList)
       },
       getMenuButton() {
-        requestMenuButton('user').then(response => {
+        requestMenuButton('role').then(response => {
           this.operationList = response.data
         }).then(() => {
           this.checkPermission()
