@@ -36,7 +36,7 @@ export function requestGet(query) {
 
 export function requestMenuButton(menucode) {
   return request({
-    url: '/sys/getmenubutons',
+    url: '/sys/getmenubutons/',
     method: 'get',
     params: { menucode }
   })
