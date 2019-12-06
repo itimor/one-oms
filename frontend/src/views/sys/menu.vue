@@ -180,7 +180,7 @@
   import {checkAuthAdd, checkAuthDel, checkAuthView, checkAuthUpdate} from '@/utils/permission'
   
   export default {
-    name: 'menu',
+    name: 'ymenu',
     
     filters: {
       menuTypeFilter(val) {

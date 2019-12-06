@@ -54,17 +54,17 @@
         label-width="120px"
         style="width: 400px; margin-left:50px;"
       >
-        <el-form-item label="原密码" prop="old_password">
-          <el-input
-            v-model="temp.old_password"
-            show-password
-            minlength="6"
-            maxlength="20"
-          />
-        </el-form-item>
+        <!--<el-form-item label="原密码" prop="old_password">-->
+          <!--<el-input-->
+            <!--v-model="temp.old_password"-->
+            <!--show-password-->
+            <!--minlength="6"-->
+            <!--maxlength="20"-->
+          <!--/>-->
+        <!--</el-form-item>-->
         <el-form-item label="新密码" prop="new_password">
           <el-input
-            v-model="temp.new_password"
+            v-model="temp.new_password1"
             placeholder="6-20位"
             show-password
             minlength="6"
@@ -73,7 +73,7 @@
         </el-form-item>
         <el-form-item label="再次输入新密码" prop="new_password_again">
           <el-input
-            v-model="temp.new_password_again"
+            v-model="temp.new_password2"
             placeholder="6-20位"
             show-password
             minlength="6"
@@ -116,13 +116,13 @@ export default {
       loading: true,
       temp: {
         old_password: '',
-        new_password: '',
-        new_password_again: ''
+        new_password1 : '',
+        new_password2: ''
       },
       rules: {
         old_password: [{ required: true, message: '请输入旧密码', trigger: 'blur' }],
-        new_password: [{ min: 6, max: 20, required: true, message: '长度在 6 到 20 个字符', trigger: 'blur' }],
-        new_password_again: [{ min: 6, max: 20, required: true, message: '长度在 6 到 20 个字符', trigger: 'blur' }]
+        new_password1: [{ min: 6, max: 20, required: true, message: '长度在 8 到 20 个字符', trigger: 'blur' }],
+        new_password2: [{ min: 6, max: 20, required: true, message: '长度在 8 到 20 个字符', trigger: 'blur' }]
       }
     }
   },
