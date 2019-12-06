@@ -103,6 +103,18 @@
         label-width="80px"
         style="width: 400px; margin-left:50px;"
       >
+        <el-form-item label="父级" prop="parent">
+          <SelectTree
+            v-model.number="temp.parent"
+            type="number"
+            :props="propsSelectTree"
+            :options="optionDataSelectTree"
+            :value="valueIdSelectTree2"
+            :clearable="true"
+            :accordion="true"
+            @getValue="getSelectTreeValue($event, 2)"
+          />
+        </el-form-item>
         <el-form-item label="菜单名称" prop="name">
           <el-input v-model="temp.name"/>
         </el-form-item>
@@ -129,7 +141,7 @@
           </el-select>
         </el-form-item>
         <el-form-item v-show="showOpera" label="操作类型" prop="operate">
-          <el-select v-model.number="temp.operate" placeholder="状态" style="width: 90px" class="filter-item">
+          <el-select v-model="temp.operate" placeholder="状态" style="width: 90px" class="filter-item">
             <el-option
               v-for="item in operateTypeOptions"
               :key="item.key"
@@ -164,6 +176,7 @@
 <script>
   import {requestGet, requestPost, requestPut, requestDelete, requestMenuButton} from '@/api/sys/menu'
   import Pagination from '@/components/Pagination'
+  import SelectTree from '@/components/TreeSelect'
   import {checkAuthAdd, checkAuthDel, checkAuthView, checkAuthUpdate} from '@/utils/permission'
   
   export default {
@@ -189,9 +202,21 @@
         return Map[val]
       }
     },
-    components: {Pagination},
+    components: {Pagination, SelectTree},
     data() {
       return {
+        valueIdSelectTree: 0,
+        valueIdSelectTree2: 0,
+        propsSelectTree: {
+          value: 'id',
+          label: 'name',
+          children: 'children',
+          placeholder: '父级'
+        },
+        propsSelectlist: [],
+        propsSelectlist2: [
+          {id: 0, parent: -1, name: '顶级'}
+        ],
         operationList: [],
         permissionList: {
           add: false,
@@ -238,6 +263,16 @@
           {key: 'view', display_name: '查看'},
         ],
         showOpera: false
+      }
+    },
+    computed: {
+      optionDataSelectTree() {
+        const cloneData = this.list
+        return cloneData.filter(father => {
+          const branchArr = cloneData.filter(child => father.id === child.parent)
+          branchArr.length > 0 ? father.children = branchArr : ''
+          return father.parent === this.list[0].parent
+        })
       }
     },
     created() {
@@ -305,6 +340,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.loading = true
+            this.temp.parent = this.valueIdSelectTree2
             requestPost(this.temp).then(response => {
               this.dialogFormVisible = false
               this.$notify({
@@ -332,6 +368,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.loading = true
+            this.temp.parent = this.valueIdSelectTree2
             requestPut(this.temp.id, this.temp).then(() => {
               this.dialogFormVisible = false
               this.$notify({
@@ -366,12 +403,20 @@
           })
         })
       },
-      handleshowOpera(val){
+      handleshowOpera(val) {
         if (val === 3) {
           this.showOpera = true
         } else {
           this.showOpera = false
           this.temp.operate = 'none'
+        }
+      },
+      getSelectTreeValue(value, type) {
+        if (type === 1) {
+          this.valueIdSelectTree = value
+          this.handleFilter()
+        } else {
+          this.valueIdSelectTree2 = value
         }
       },
       handleSelectionChange(val) {

@@ -88,6 +88,18 @@
         label-width="80px"
         style="width: 400px; margin-left:50px;"
       >
+        <el-form-item label="父级" prop="parent">
+          <SelectTree
+            v-model.number="temp.parent"
+            type="number"
+            :props="propsSelectTree"
+            :options="optionDataSelectTree2"
+            :value="valueIdSelectTree2"
+            :clearable="true"
+            :accordion="true"
+            @getValue="getSelectTreeValue($event, 2)"
+          />
+        </el-form-item>
         <el-form-item label="名称" prop="name">
           <el-input v-model="temp.name"/>
         </el-form-item>
@@ -127,13 +139,26 @@
   import {requestGet as requestAllMenu, requestMenuButton} from '@/api/sys/menu'
   import {requestGet, requestPost, requestPut, requestDelete} from '@/api/sys/role'
   import Pagination from '@/components/Pagination'
+  import SelectTree from '@/components/TreeSelect'
   import {checkAuthAdd, checkAuthDel, checkAuthView, checkAuthUpdate} from '@/utils/permission'
   
   export default {
     name: 'user',
-    components: {Pagination},
+    components: {Pagination, SelectTree},
     data() {
       return {
+        valueIdSelectTree: 0,
+        valueIdSelectTree2: 0,
+        propsSelectTree: {
+          value: 'id',
+          label: 'memo',
+          children: 'children',
+          placeholder: '父级'
+        },
+        propsSelectlist: [],
+        propsSelectlist2: [
+          {id: 0, parent: -1, name: '顶级'}
+        ],
         operationList: [],
         permissionList: {
           add: false,
@@ -167,6 +192,16 @@
           label: 'name'
         },
         treeData: [],
+      }
+    },
+    computed: {
+      optionDataSelectTree2() {
+        const cloneData = this.list
+        return cloneData.filter(father => {
+          const branchArr = cloneData.filter(child => father.id === child.parent)
+          branchArr.length > 0 ? father.children = branchArr : ''
+          return father.parent === this.list[0].parent
+        })
       }
     },
     created() {
@@ -211,6 +246,7 @@
       },
       resetTemp() {
         this.temp = {
+          parent: 0,
           name: '',
           sequence: '',
           menus: [],
@@ -230,6 +266,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.loading = true
+            this.temp.parent = this.valueIdSelectTree2
             this.temp.menus = this.$refs.tree.getCheckedKeys()
             requestPost(this.temp).then(response => {
               this.dialogFormVisible = false
@@ -259,6 +296,7 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.loading = true
+            this.temp.parent = this.valueIdSelectTree2
             this.temp.menus = this.$refs.tree.getCheckedKeys()
             requestPut(this.temp.id, this.temp).then(() => {
               this.dialogFormVisible = false
@@ -293,6 +331,14 @@
             message: '已取消删除'
           })
         })
+      },
+      getSelectTreeValue(value, type) {
+        if (type === 1) {
+          this.valueIdSelectTree = value
+          this.handleFilter()
+        } else {
+          this.valueIdSelectTree2 = value
+        }
       },
       handleSelectionChange(val) {
         this.multipleSelection = val

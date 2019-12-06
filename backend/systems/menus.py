@@ -96,14 +96,14 @@ def set_menu(menus, parent_id):
 def init_menu(menu):
     if menu.type == 2:
         menu_list = [
-            {"name": "新增", "code": menu.code + "add", "curl": menu.curl + "/add", "operate": "add", "sequence": 10, "parent_id": menu.id},
-            {"name": "删除", "code": menu.code + "del", "curl": menu.curl + "/del", "operate": "del", "sequence": 20, "parent_id": menu.id},
-            {"name": "编辑", "code": menu.code + "update", "curl": menu.curl + "/update", "operate": "update", "sequence": 30, "parent_id": menu.id},
-            {"name": "查看", "code": menu.code + "view", "curl": menu.curl + "/view", "operate": "view", "sequence": 40, "parent_id": menu.id},
+            {"name": "新增", "code": menu.code + "add", "curl": menu.curl + "/add", 'type': 3, "operate": "add", "sequence": 10, "parent_id": menu.id},
+            {"name": "删除", "code": menu.code + "del", "curl": menu.curl + "/del", 'type': 3, "operate": "del", "sequence": 20, "parent_id": menu.id},
+            {"name": "编辑", "code": menu.code + "update", "curl": menu.curl + "/update", 'type': 3, "operate": "update", "sequence": 30, "parent_id": menu.id},
+            {"name": "查看", "code": menu.code + "view", "curl": menu.curl + "/view", 'type': 3, "operate": "view", "sequence": 40, "parent_id": menu.id},
         ]
 
         menu_models = []
         for item in menu_list:
-            menu_models.append(Menu(name=item['name'], code=item['code'], curl=item['curl'], operate=item['operate'],
+            menu_models.append(Menu(name=item['name'], code=item['code'], curl=item['curl'], type=item['type'], operate=item['operate'],
                                     sequence=item['sequence'], parent_id=item['parent_id'], ))
         Menu.objects.bulk_create(menu_models)

@@ -51,8 +51,6 @@ class MenuSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         obj = Menu.objects.create(**validated_data)
-        obj.save()
-
         if obj.type == 2:
             init_menu(obj)
         return obj
