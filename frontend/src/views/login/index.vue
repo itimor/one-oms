@@ -156,7 +156,7 @@ export default {
       } else {
         this.loginForm = {
           username: "test",
-          password: "123456"
+          password: "qqqqq@11111"
         };
       }
     },

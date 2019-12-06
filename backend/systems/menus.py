@@ -6,9 +6,9 @@ from systems.models import *
 
 # 获取管理员权限下所有菜单
 def get_menus_by_user(user):
-    user_obj = User.objects.get(username=user)
+    user_obj = User.objects.filter(username=user)
 
-    if user_obj.is_admin:
+    if user_obj.first().is_admin:
         menus = Menu.objects.all()
         if len(menus) == 0:
             print("############初始化菜单###########")

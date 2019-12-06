@@ -361,6 +361,7 @@
         this.dialogStatus = 'update'
         this.dialogFormVisible = true
         this.$nextTick(() => {
+          this.valueIdSelectTree2 = this.temp.parent
           this.$refs['dataForm'].clearValidate()
         })
       },

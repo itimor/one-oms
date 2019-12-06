@@ -15,6 +15,10 @@ export function getInfo(token) {
   })
 }
 
+export function logout(data) {
+  return
+}
+
 export function changepwd(data) {
   return request({
     url: '/sys/changepwd',

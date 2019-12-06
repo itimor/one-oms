@@ -246,7 +246,6 @@
       },
       resetTemp() {
         this.temp = {
-          parent: 0,
           name: '',
           sequence: '',
           menus: [],
@@ -289,6 +288,7 @@
         this.dialogFormVisible = true
         this.$nextTick(() => {
           this.$refs['dataForm'].clearValidate()
+          this.valueIdSelectTree2 = this.temp.parent
           this.$refs.tree.setCheckedKeys(row.menus)
         })
       },

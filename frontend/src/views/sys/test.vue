@@ -48,7 +48,7 @@
         this.permissionList.update = checkAuthUpdate(this.operationList)
       },
       getMenuButton() {
-        requestMenuButton('role').then(response => {
+        requestMenuButton('test').then(response => {
           this.operationList = response.data
         }).then(() => {
           this.checkPermission()
