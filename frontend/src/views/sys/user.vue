@@ -123,6 +123,9 @@
         <el-form-item label="头像" prop="avatar">
           <el-input v-model="temp.avatar"/>
         </el-form-item>
+        <el-form-item label="介绍" prop="memo">
+          <el-input v-model="temp.memo"/>
+        </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-switch
             v-model="temp.is_active"
@@ -251,7 +254,8 @@
           realname: '',
           avatar: 'http://m.imeitou.com/uploads/allimg/2017110610/b3c433vwhsk.jpg',
           roles: [],
-          is_active: true
+          is_active: true,
+          memo: ''
         }
       },
       handleCreate() {
