@@ -27,6 +27,7 @@ export default {
       type: Object,
       default: function() {
         return {
+          'z-index': '1024',
           right: '50px',
           bottom: '50px',
           width: '40px',

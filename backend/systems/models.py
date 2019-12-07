@@ -38,6 +38,7 @@ class User(AbstractBaseUser):
     create_date = models.DateField(auto_now_add=True, verbose_name=u'创建时间')
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    memo = models.TextField(blank=True, verbose_name=u'备注')
 
     USERNAME_FIELD = 'username'  # 必须有一个唯一标识--USERNAME_FIELD
 

@@ -9,7 +9,7 @@ from systems.menus import init_menu
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', 'realname', 'avatar', 'roles', 'is_active', 'password')
+        fields = ('url', 'id', 'username', 'realname', 'avatar', 'roles', 'is_active', 'memo', 'password')
         extra_kwargs = {'password': {'write_only': True, 'required': False}}
 
     def create(self, validated_data):
@@ -29,6 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
         instance.realname = validated_data.get('realname', instance.realname)
         instance.avatar = validated_data.get('avatar', instance.avatar)
         instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.memo = validated_data.get('memo', instance.memo)
         try:
             instance.set_password(validated_data['password'])
         except:

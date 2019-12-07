@@ -12,7 +12,7 @@
             <span class="pan-info-roles">{{ username }}</span>
           </pan-thumb>
           <div class="info-container">
-            <span class="display_name">欢迎！{{ username }}</span>
+            <span class="display_name">Hi！{{ username }}</span>
           </div>
         </div>
         <div>
