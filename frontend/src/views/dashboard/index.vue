@@ -13,6 +13,8 @@
           </pan-thumb>
           <div class="info-container">
             <span class="display_name">Hi！{{ username }}</span>
+            <span class="introduction">{{ introduction }}</span>
+            <a></a>
           </div>
         </div>
         <div>
@@ -94,7 +96,7 @@ export default {
     ...mapGetters([
       'username',
       'avatar',
-      'roles'
+      'introduction',
     ])
   },
   methods: {
@@ -119,11 +121,17 @@ export default {
         height: 150px;
         line-height: 200px;
         .display_name {
-          font-size: 48px;
+          font-size: 32px;
           line-height: 48px;
-          color: #212121;
+          color: #40c9c6;
           position: absolute;
           top: 25px;
+        }
+        .introduction {
+          font-size: 24px;
+          font-style: italic;
+          line-height: 32px;
+          color: #c0c4cc;
         }
       }
       .emptyGif {
