@@ -43,6 +43,7 @@
     methods: {
       checkPermission() {
         this.permissionList.add = checkAuthAdd(this.operationList)
+        console.log(this.permissionList.add)
         this.permissionList.del = checkAuthDel(this.operationList)
         this.permissionList.view = checkAuthView(this.operationList)
         this.permissionList.update = checkAuthUpdate(this.operationList)
