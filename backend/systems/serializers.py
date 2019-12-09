@@ -9,7 +9,7 @@ from systems.menus import init_menu
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('url', 'id', 'username', 'realname', 'avatar', 'roles', 'is_active', 'memo', 'password')
+        fields = '__all__'
         extra_kwargs = {'password': {'write_only': True, 'required': False}}
 
     def create(self, validated_data):

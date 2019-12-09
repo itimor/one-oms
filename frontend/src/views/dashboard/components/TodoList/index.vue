@@ -47,13 +47,12 @@ const filters = {
   completed: todos => todos.filter(todo => todo.done)
 }
 const defalutList = [
-  { text: '站在山巅撒尿', done: true },
+  { text: '海边看日落', done: true },
   { text: '去西藏', done: false },
-  { text: '去丽江', done: true },
-  { text: '峨眉山、黄山', done: true },
-  { text: '走访江南古镇', done: false },
-  { text: '观看大漠飞沙', done: false },
-  { text: '看看大海', done: true }
+  { text: '丽江喝酒', done: true },
+  { text: '峨眉山小憩', done: true },
+  { text: '乌镇等雨', done: false },
+  { text: '大漠飞沙', done: false }
 ]
 export default {
   components: { Todo },

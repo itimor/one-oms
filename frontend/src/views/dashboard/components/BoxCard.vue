@@ -8,19 +8,15 @@
       <mallki class-name="mallki-text" text="昨夜未醒的梦" />
       <div style="padding-top:35px;" class="progress-item">
         <span>绕世界流浪</span>
-        <el-progress :percentage="70" />
+        <el-progress :percentage="10" />
       </div>
       <div class="progress-item">
-        <span>成为百万富翁</span>
+        <span>定个小目录，先挣它一个亿越南盾</span>
         <el-progress :percentage="18" />
       </div>
       <div class="progress-item">
-        <span>成为千万富翁</span>
+        <span>冲上白银</span>
         <el-progress :percentage="12" />
-      </div>
-      <div class="progress-item">
-        <span>成为一万富翁</span>
-        <el-progress :percentage="100" status="success" />
       </div>
     </div>
   </el-card>

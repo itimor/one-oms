@@ -59,7 +59,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
         <template slot-scope="{ row }">
-          <el-button-group  v-if="row.username!=='admin'">
+          <el-button-group  v-show="!row.is_admin">
             <el-button
               v-if="permissionList.update"
               size="small"
@@ -128,7 +128,7 @@
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-switch
-            v-model="temp.is_active"
+            v-model="temp.is_active"git pu
             active-color="#13ce66"
             inactive-color="#ff4949">
           </el-switch>
