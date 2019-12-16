@@ -39,8 +39,9 @@ INSTALLED_APPS = [
     'rest_framework',  # api
     'django_filters',  # 过滤
     'corsheaders',  # 跨域
-    'systems',
     'tools',
+    'systems',
+    'workflows',
 ]
 
 MIDDLEWARE = [

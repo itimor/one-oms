@@ -10,7 +10,7 @@ import json
 output = requests.get('https://ifconfig.me/all.json').json()
 
 # 获取本机计算机ip
-def get_int_ip():
+def get_local_ip():
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.connect(('8.8.8.8', 80))
@@ -20,7 +20,7 @@ def get_int_ip():
 
     return ip
 
-output['local_ip'] = get_int_ip()
+output['local_ip'] = get_local_ip()
 
 ## output
 """
@@ -37,5 +37,6 @@ output['local_ip'] = get_int_ip()
   "local_ip": "172.16.51.115"
 }"""
 
-with open('d:/ooxx.log', 'w+') as fn:
+with open('d:/ooxx.log', 'a+') as fn:
+    print(output)
     fn.write(json.dumps(output))

@@ -58,7 +58,7 @@ class User(AbstractBaseUser):
 
 class Role(models.Model):
     parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, default='1', verbose_name=u'父级角色')
-    name = models.CharField(max_length=32, unique=True, verbose_name=u'角色')
+    name = models.CharField(max_length=32, unique=True, verbose_name=u'名称')
     sequence = models.SmallIntegerField(default=0, verbose_name=u'排序值')
     menus = models.ManyToManyField('Menu', blank=True, verbose_name=u'菜单')
     memo = models.TextField(blank=True, verbose_name=u'备注')
