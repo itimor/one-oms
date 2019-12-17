@@ -173,4 +173,6 @@ export const componentsMap = {
   role: () => import('@/views/sys/role'), // 后台角色
   icon: () => import('@/views/svg-icons/index'), // 图标管理
   test: () => import('@/views/sys/test'), // test
+  // workflow
+  workflow: () => import('@/views/workflow/workflow'), // 工作流
 }

@@ -7,6 +7,8 @@ export default {
     menu: 'menuManager',
     icon: 'iconManager',
     test: 'testManager',
+    workflowManager: 'workflowManager',
+    workflow: 'workflow',
   },
   navbar: {
     logOut: 'Log Out',

@@ -44,22 +44,12 @@
     <el-table :data="list" v-loading="listLoading" border style="width: 100%" highlight-current-row @sort-change="handleSortChange"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"/>
-      <el-table-column label="用户名" prop="username"></el-table-column>
-      <el-table-column label="真实姓名" prop="realname"></el-table-column>
-      <el-table-column label="邮箱" prop="email"></el-table-column>
-      <el-table-column label="头像" align="center">
-        <template slot-scope="scope">
-          <el-avatar :src="scope.row.avatar"/>
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" prop="is_active" sortable="custom">
-        <template slot-scope="scope">
-          <span>{{scope.row.is_active}}</span>
-        </template>
-      </el-table-column>
+      <el-table-column label="名称" prop="name"></el-table-column>
+      <el-table-column label="排序" prop="sequence"></el-table-column>
+      <el-table-column label="备注" prop="memo"></el-table-column>
       <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
         <template slot-scope="{ row }">
-          <el-button-group  v-show="!row.is_admin">
+          <el-button-group>
             <el-button
               v-if="permissionList.update"
               size="small"
@@ -98,42 +88,28 @@
         label-width="80px"
         style="width: 400px; margin-left:50px;"
       >
-        <el-form-item label="用户名" prop="username">
-          <el-input
-            v-model="temp.username"
-            :disabled="dialogStatus === 'create' ? false : true"
+        <el-form-item label="父级" prop="parent">
+          <SelectTree
+            v-model.number="temp.parent"
+            type="number"
+            :props="propsSelectTree"
+            :options="optionDataSelectTree2"
+            :value="valueIdSelectTree2"
+            :clearable="true"
+            :accordion="true"
+            @getValue="getSelectTreeValue($event, 2)"
           />
         </el-form-item>
-        <el-form-item
-          v-if="dialogStatus === 'create' ? true : false"
-          label="密码"
-          prop="password"
-        >
-          <el-input
-            v-model="temp.password"
-            placeholder="6-20位"
-            show-password
-            minlength="6"
-            maxlength="20"
-          />
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="temp.name"/>
         </el-form-item>
-        <el-form-item label="真实姓名" prop="realname">
-          <el-input v-model="temp.realname"/>
+        <el-form-item label="排序值" prop="sequence">
+          <el-input v-model="temp.sequence"/>
         </el-form-item>
-        <el-form-item label="头像" prop="avatar">
-          <el-input v-model="temp.avatar"/>
-        </el-form-item>
-        <el-form-item label="介绍" prop="memo">
+        <el-form-item label="备注" prop="memo">
           <el-input v-model="temp.memo"/>
         </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-switch
-            v-model="temp.is_active"
-            active-color="#13ce66"
-            inactive-color="#ff4949">
-          </el-switch>
-        </el-form-item>
-        <el-form-item label="用户角色" prop="roles">
+        <el-form-item label="菜单" prop="menus">
           <el-tree
             ref="tree"
             :check-strictly="false"
@@ -160,17 +136,29 @@
 </template>
 
 <script>
-  import {requestMenuButton} from '@/api/sys/menu'
-  import {requestGet as requestAllRole} from '@/api/sys/role'
-  import {requestGet, requestPost, requestPut, requestDelete} from '@/api/sys/user'
+  import {requestGet as requestAllMenu, requestMenuButton} from '@/api/sys/menu'
+  import {requestGet, requestPost, requestPut, requestDelete} from '@/api/sys/role'
   import Pagination from '@/components/Pagination'
+  import SelectTree from '@/components/TreeSelect'
   import {checkAuthAdd, checkAuthDel, checkAuthView, checkAuthUpdate} from '@/utils/permission'
   
   export default {
-    name: 'user',
-    components: {Pagination},
+    name: 'role',
+    components: {Pagination, SelectTree},
     data() {
       return {
+        valueIdSelectTree: 0,
+        valueIdSelectTree2: 0,
+        propsSelectTree: {
+          value: 'id',
+          label: 'memo',
+          children: 'children',
+          placeholder: '父级'
+        },
+        propsSelectlist: [],
+        propsSelectlist2: [
+          {id: 0, parent: -1, name: '顶级'}
+        ],
         operationList: [],
         permissionList: {
           add: false,
@@ -196,15 +184,24 @@
           create: '添加',
         },
         rules: {
-          username: [{required: true, message: '请输入用户名', trigger: 'blur'}],
-          password: [{min: 6, max: 20, required: true, message: '长度在 6 到 20 个字符', trigger: 'blur'}]
+          name: [{required: true, message: '请输入名称', trigger: 'blur'}],
         },
         multipleSelection: [],
         treeProps: {
           children: 'children',
-          label: 'memo'
+          label: 'name'
         },
         treeData: [],
+      }
+    },
+    computed: {
+      optionDataSelectTree2() {
+        const cloneData = this.list
+        return cloneData.filter(father => {
+          const branchArr = cloneData.filter(child => father.id === child.parent)
+          branchArr.length > 0 ? father.children = branchArr : ''
+          return father.parent === this.list[0].parent
+        })
       }
     },
     created() {
@@ -220,7 +217,7 @@
         this.permissionList.update = checkAuthUpdate(this.operationList)
       },
       getMenuButton() {
-        requestMenuButton('user').then(response => {
+        requestMenuButton('role').then(response => {
           this.operationList = response.data
         }).then(() => {
           this.checkPermission()
@@ -249,13 +246,10 @@
       },
       resetTemp() {
         this.temp = {
-          username: '',
-          password: '',
-          realname: '',
-          avatar: 'http://m.imeitou.com/uploads/allimg/2017110610/b3c433vwhsk.jpg',
-          roles: [],
-          is_active: true,
-          memo: ''
+          name: '',
+          sequence: '',
+          menus: [],
+          memo: '',
         }
       },
       handleCreate() {
@@ -271,7 +265,8 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.loading = true
-            this.temp.roles = this.$refs.tree.getCheckedKeys()
+            this.temp.parent = this.valueIdSelectTree2
+            this.temp.menus = this.$refs.tree.getCheckedKeys()
             requestPost(this.temp).then(response => {
               this.dialogFormVisible = false
               this.$notify({
@@ -293,14 +288,16 @@
         this.dialogFormVisible = true
         this.$nextTick(() => {
           this.$refs['dataForm'].clearValidate()
-          this.$refs.tree.setCheckedKeys(row.roles)
+          this.valueIdSelectTree2 = this.temp.parent
+          this.$refs.tree.setCheckedKeys(row.menus)
         })
       },
       updateData() {
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.loading = true
-            this.temp.roles = this.$refs.tree.getCheckedKeys()
+            this.temp.parent = this.valueIdSelectTree2
+            this.temp.menus = this.$refs.tree.getCheckedKeys()
             requestPut(this.temp.id, this.temp).then(() => {
               this.dialogFormVisible = false
               this.$notify({
@@ -335,6 +332,14 @@
           })
         })
       },
+      getSelectTreeValue(value, type) {
+        if (type === 1) {
+          this.valueIdSelectTree = value
+          this.handleFilter()
+        } else {
+          this.valueIdSelectTree2 = value
+        }
+      },
       handleSelectionChange(val) {
         this.multipleSelection = val
       },
@@ -365,7 +370,7 @@
         })
       },
       getTreeData() {
-        requestAllRole().then(response => {
+        requestAllMenu().then(response => {
           this.treeData = this.optionDataSelectTree(response)
         })
       },

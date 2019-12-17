@@ -7,6 +7,8 @@ export default {
     menu: '菜单管理',
     icon: '图标管理',
     test: '测试页面',
+    workflowManager: '工作流',
+    workflow: '工作流设计',
   },
   navbar: {
     logOut: '退出登录',

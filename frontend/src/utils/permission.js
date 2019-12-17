@@ -51,9 +51,3 @@ export function checkAuthView(arr) {
 export function checkAuthUpdate(arr) {
   return checkAuth(arr, 'update')
 }
-export function checkAuthSetadminrole(arr) {
-  return checkAuth(arr, 'setadminrole')
-}
-export function checkAuthSetrolemenu(arr) {
-  return checkAuth(arr, 'setrolemenu')
-}
