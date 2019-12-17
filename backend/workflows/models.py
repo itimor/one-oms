@@ -8,7 +8,6 @@ from systems.models import User
 class Workflow(models.Model):
     name = models.CharField(max_length=32, unique=True, verbose_name=u'名称')
     status = models.BooleanField(default=True)
-    steps = models.ManyToManyField('WorkflowStep', blank=True, verbose_name=u'步骤')
     memo = models.TextField(blank=True, verbose_name=u'备注')
 
     def __str__(self):
@@ -20,6 +19,7 @@ class Workflow(models.Model):
 
 
 class WorkflowStep(models.Model):
+    workflow = models.ForeignKey(Workflow, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=u'工作流')
     name = models.CharField(max_length=32, unique=True, verbose_name=u'名称')
     action_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=u'执行者')
     sequence = models.SmallIntegerField(default=1, verbose_name=u'排序值')

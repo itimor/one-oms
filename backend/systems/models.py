@@ -106,8 +106,3 @@ class Menu(models.Model):
         ordering = ['id', 'sequence']
         verbose_name = u'角色'
         verbose_name_plural = u'角色'
-
-    def save(self, *args, **kwargs):
-        if self.type == 3:
-            self.hidden = True
-        super(Menu, self).save(*args, **kwargs)
