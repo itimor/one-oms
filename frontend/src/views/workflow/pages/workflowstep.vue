@@ -1,49 +1,28 @@
 <template>
   <div class="app-container">
+    <el-steps :active="active">
+      <el-step
+        v-for="node in list"
+        :key="node.id"
+        :title="node.name"
+        :description="node.action_user"
+      ></el-step>
+    </el-steps>
+    <el-divider>
+      <i class="el-icon-s-opportunity"></i>
+    </el-divider>
     <div class="filter-container">
-      <el-input
-        v-model="listQuery.search"
-        placeholder="请输入内容"
-        clearable
-        prefix-icon="el-icon-search"
-        style="width: 200px;"
+      <el-button
         class="filter-item"
-        @keyup.enter.native="handleFilter"
-        @clear="handleFilter"
-      />
-      <el-button-group>
-        <el-button
-          class="filter-item"
-          type="primary"
-          icon="el-icon-search"
-          @click="handleFilter"
-        >
-          {{ "搜索" }}
-        </el-button>
-        <el-button
-          v-if="permissionList.add"
-          class="filter-item"
-          type="success"
-          icon="el-icon-edit"
-          @click="handleCreate"
-        >
-          {{ "添加" }}
-        </el-button>
-        <el-button
-          v-if="permissionList.del"
-          class="filter-item"
-          type="danger"
-          icon="el-icon-delete"
-          @click="handleBatchDel"
-        >
-          {{ "删除" }}
-        </el-button>
-      </el-button-group>
+        type="success"
+        icon="el-icon-edit"
+        @click="handleCreate"
+      >
+        {{ "添加" }}
+      </el-button>
     </div>
 
-    <el-table :data="list" v-loading="listLoading" border style="width: 100%" highlight-current-row @sort-change="handleSortChange"
-              @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55"/>
+    <el-table :data="list" v-loading="listLoading" border style="width: 100%" highlight-current-row>
       <el-table-column label="名称" prop="name"></el-table-column>
       <el-table-column label="状态" prop="status" sortable="custom">
         <template slot-scope="scope">
@@ -54,7 +33,6 @@
         <template slot-scope="{ row }">
           <el-button-group>
             <el-button
-              v-if="permissionList.update"
               size="small"
               type="primary"
               @click="handleUpdate(row)"
@@ -62,34 +40,16 @@
               {{ "编辑" }}
             </el-button>
             <el-button
-              v-if="permissionList.del"
               size="small"
               type="danger"
               @click="handleDelete(row)"
             >
               {{ "删除" }}
             </el-button>
-            <el-button
-              v-if="permissionList.add"
-              size="small"
-              type="warning"
-              @click="handleCreateFlow(row)"
-            >
-              {{ "编排步骤" }}
-            </el-button>
           </el-button-group>
         </template>
       </el-table-column>
     </el-table>
-    <div class="table-pagination">
-      <pagination
-        v-show="total > 0"
-        :total="total"
-        :page.sync="listQuery.offset"
-        :limit.sync="listQuery.limit"
-        @pagination="getList"
-      />
-    </div>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form
         ref="dataForm"
@@ -122,32 +82,18 @@
         </el-button>
       </div>
     </el-dialog>
-
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFlowVisible">
-   <workflow-step></workflow-step>
-    </el-dialog>
   </div>
 </template>
 
 <script>
-  import {requestMenuButton} from '@/api/sys/menu'
-  import {requestGet, requestPost, requestPut, requestDelete} from '@/api/workflow/workflow'
-  import Pagination from '@/components/Pagination'
-  import {checkAuthAdd, checkAuthDel, checkAuthView, checkAuthUpdate} from '@/utils/permission'
-  import workflowStep from './pages/workflowstep'
+  import {requestGet, requestPost, requestPut, requestDelete} from '@/api/workflow/workflowstep'
+  import * as sys from "@/api/sys/user"
 
   export default {
-    name: 'workflow',
-    components: {Pagination, workflowStep},
+    name: 'workflowstep',
+    components: {},
     data() {
       return {
-        operationList: [],
-        permissionList: {
-          add: false,
-          del: false,
-          view: false,
-          update: false
-        },
         list: [],
         total: 0,
         listLoading: true,
@@ -160,7 +106,6 @@
         },
         temp: {},
         dialogFormVisible: false,
-        dialogFlowVisible: false,
         dialogStatus: '',
         textMap: {
           update: '编辑',
@@ -169,34 +114,26 @@
         rules: {
           name: [{required: true, message: '请输入名称', trigger: 'blur'}]
         },
-        multipleSelection: [],
-        workflow_id: 0,
+        users: [],
+        active: 1
       }
     },
     created() {
-      this.getMenuButton()
       this.getList()
+      this.getUserList()
     },
     methods: {
-      checkPermission() {
-        this.permissionList.add = checkAuthAdd(this.operationList)
-        this.permissionList.del = checkAuthDel(this.operationList)
-        this.permissionList.view = checkAuthView(this.operationList)
-        this.permissionList.update = checkAuthUpdate(this.operationList)
-      },
-      getMenuButton() {
-        requestMenuButton('user').then(response => {
-          this.operationList = response.data
-        }).then(() => {
-          this.checkPermission()
-        })
-      },
       getList() {
         this.listLoading = true
         requestGet(this.listQuery).then(response => {
           this.list = response.results
           this.total = response.count
           this.listLoading = false
+        })
+      },
+      getUserList() {
+        sys.requestGet().then(response => {
+          this.users = response;
         })
       },
       handleFilter() {
@@ -292,39 +229,6 @@
             message: '已取消删除'
           })
         })
-      },
-      handleSelectionChange(val) {
-        this.multipleSelection = val
-      },
-      handleBatchDel() {
-        if (this.multipleSelection.length === 0) {
-          this.$message({
-            message: '未选中任何行',
-            type: 'warning',
-            duration: 2000
-          })
-          return
-        }
-        this.$confirm('是否确定删除?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          for (const v of this.multipleSelection) {
-            requestDelete(v).then(() => {
-              this.getList()
-            })
-          }
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
-      },
-      handleCreateFlow(row){
-        this.dialogFlowVisible = true
-
       }
     }
   }
