@@ -69,14 +69,6 @@
             >
               {{ "删除" }}
             </el-button>
-            <el-button
-              v-if="permissionList.add"
-              size="small"
-              type="warning"
-              @click="handleCreateFlow(row)"
-            >
-              {{ "编排步骤" }}
-            </el-button>
           </el-button-group>
         </template>
       </el-table-column>
@@ -122,93 +114,12 @@
         </el-button>
       </div>
     </el-dialog>
-    
-    <el-dialog title="编排步骤" :visible.sync="dialogFlowVisible">
-      <el-steps :active="active">
-        <el-step
-          v-for="node in steplist"
-          :key="node.id"
-          :title="node.name"
-          :description="node.action_user"
-        ></el-step>
-      </el-steps>
-      <el-divider>
-        <i class="el-icon-s-opportunity"></i>
-      </el-divider>
-      <div class="filter-container">
-        <el-button
-          class="filter-item"
-          type="success"
-          icon="el-icon-edit"
-          @click="handleStepCreate"
-        >
-          {{ "添加" }}
-        </el-button>
-      </div>
-      
-      <el-table :data="steplist" border highlight-current-row>
-        <el-table-column label="名称" prop="name"></el-table-column>
-        <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
-          <template slot-scope="{ row }">
-            <el-button-group>
-              <el-button
-                size="small"
-                type="primary"
-                @click="handleStepUpdate(row)"
-              >
-                {{ "编辑" }}
-              </el-button>
-              <el-button
-                size="small"
-                type="danger"
-                @click="handleStepDelete(row)"
-              >
-                {{ "删除" }}
-              </el-button>
-            </el-button-group>
-          </template>
-        </el-table-column>
-      </el-table>
-    </el-dialog>
-    
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogStepVisible">
-      <el-form
-        ref="stepForm"
-        :rules="rules"
-        :model="temp"
-        label-position="left"
-        label-width="80px"
-        style="width: 400px; margin-left:50px;"
-      >
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="temp.name"/>
-        </el-form-item>
-        <el-form-item label="执行者" prop="memo">
-          <el-select v-model="temp.action_user" placeholder="请选择用户">
-            <el-option v-for="item in users" :key="item.id" :label="item.username" :value="item.username"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="排序" prop="sequence">
-          <el-input v-model="temp.sequence"/>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogStepVisible = false">
-          {{ "取消" }}
-        </el-button>
-        <el-button type="primary" @click="dialogStatus === 'create' ? createStepData() : updateStepData()">
-          {{ "确定" }}
-        </el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
 <script>
   import {requestMenuButton} from '@/api/sys/menu'
-  import {requestGet, requestPost, requestPut, requestDelete} from '@/api/workflow/workflow'
-  import * as step from "@/api/workflow/workflowstep"
-  import * as sys from "@/api/sys/user"
+  import {requestGet, requestPost, requestPut, requestDelete} from '@/api/workflow/ticket'
   import Pagination from '@/components/Pagination'
   import {checkAuthAdd, checkAuthDel, checkAuthView, checkAuthUpdate} from '@/utils/permission'
   
@@ -245,19 +156,12 @@
         rules: {
           name: [{required: true, message: '请输入名称', trigger: 'blur'}]
         },
-        multipleSelection: [],
-        workflow_id: 0,
-        active: 999,
-        users: [],
-        steplist: [],
-        steptemp: {},
-        dialogStepVisible: false,
+        multipleSelection: []
       }
     },
     created() {
       this.getMenuButton()
       this.getList()
-      this.getUserList()
     },
     methods: {
       checkPermission() {
@@ -279,16 +183,6 @@
           this.list = response.results
           this.total = response.count
           this.listLoading = false
-        })
-      },
-      getStepList() {
-        step.requestGet(this.listQuery).then(response => {
-          this.steplist = response.results
-        })
-      },
-      getUserList() {
-        sys.requestGet().then(response => {
-          this.users = response;
         })
       },
       handleFilter() {
@@ -410,83 +304,6 @@
               this.getList()
             })
           }
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
-      },
-      handleCreateFlow(row) {
-        this.dialogFlowVisible = true
-        this.workflow_id = row.id
-        this.getStepList()
-      },
-      handleStepCreate() {
-        this.resetTemp()
-        this.dialogStatus = 'create'
-        this.dialogStepVisible = true
-        this.$nextTick(() => {
-          this.$refs['stepForm'].clearValidate()
-        })
-      },
-      createStepData() {
-        this.$refs['stepForm'].validate((valid) => {
-          if (valid) {
-            step.requestPost(this.temp).then(response => {
-              this.dialogStepVisible = false
-              this.$notify({
-                title: '成功',
-                message: '创建成功',
-                type: 'success',
-                duration: 2000
-              })
-              this.getStepList()
-            }).catch(() => {
-              this.loading = false
-            })
-          }
-        })
-      },
-      handleStepUpdate(row) {
-        this.temp = row
-        this.dialogStatus = 'update'
-        this.dialogStepVisible = true
-        this.$nextTick(() => {
-          this.$refs['stepForm'].clearValidate()
-        })
-      },
-      updateStepData() {
-        this.$refs['stepForm'].validate((valid) => {
-          if (valid) {
-            step.requestPut(this.temp.id, this.temp).then(() => {
-              this.dialogStepVisible = false
-              this.$notify({
-                title: '成功',
-                message: '更新成功',
-                type: 'success',
-                duration: 2000
-              })
-              this.getStepList()
-            }).catch(() => {
-            })
-          }
-        })
-      },
-      handleStepDelete(row) {
-        this.$confirm('是否确定删除?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          console.log(row)
-          step.requestDelete(row.id).then(() => {
-            this.$message({
-              message: '删除成功',
-              type: 'success'
-            })
-            this.getStepList()
-          })
         }).catch(() => {
           this.$message({
             type: 'info',

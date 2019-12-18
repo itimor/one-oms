@@ -9,6 +9,7 @@ export default {
     test: '测试页面',
     workflowManager: '工作流',
     workflow: '工作流设计',
+    ticket: '工单',
   },
   navbar: {
     logOut: '退出登录',

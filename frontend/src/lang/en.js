@@ -9,6 +9,7 @@ export default {
     test: 'testManager',
     workflowManager: 'workflowManager',
     workflow: 'workflow',
+    ticket: 'ticket',
   },
   navbar: {
     logOut: 'Log Out',

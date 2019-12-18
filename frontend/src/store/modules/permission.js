@@ -175,4 +175,5 @@ export const componentsMap = {
   test: () => import('@/views/sys/test'), // test
   // workflow
   workflow: () => import('@/views/workflow/workflow'), // 工作流
+  ticket: () => import('@/views/workflow/ticket'), // 工单
 }
