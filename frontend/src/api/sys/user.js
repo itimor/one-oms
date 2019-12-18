@@ -13,7 +13,7 @@ export function requestPost(data) {
 export function requestDelete(id) {
   return request({
     url: apiurl + id + '/',
-    method: 'delete',
+    method: 'delete'
   })
 }
 

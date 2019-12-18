@@ -10,11 +10,10 @@ export function requestPost(data) {
   })
 }
 
-export function requestDelete(data) {
+export function requestDelete(id) {
   return request({
-    url: apiurl,
-    method: 'delete',
-    data
+    url: apiurl + id + '/',
+    method: 'delete'
   })
 }
 
