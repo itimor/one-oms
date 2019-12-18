@@ -21,6 +21,9 @@ class WorkflowStepSerializer(serializers.ModelSerializer):
 
 
 class TicketSerializer(serializers.ModelSerializer):
+    workflow = serializers.SlugRelatedField(queryset=Workflow.objects.all(), slug_field='name')
+    create_user = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='username')
+
     class Meta:
         model = Ticket
         fields = '__all__'

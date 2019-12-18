@@ -29,27 +29,23 @@
         >
           {{ "添加" }}
         </el-button>
-        <el-button
-          v-if="permissionList.del"
-          class="filter-item"
-          type="danger"
-          icon="el-icon-delete"
-          @click="handleBatchDel"
-        >
-          {{ "删除" }}
-        </el-button>
       </el-button-group>
     </div>
-    
-    <el-table :data="list" v-loading="listLoading" border style="width: 100%" highlight-current-row @sort-change="handleSortChange"
-              @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55"/>
+
+    <el-table :data="list" v-loading="listLoading" border style="width: 100%" highlight-current-row @sort-change="handleSortChange">
+      <el-table-column label="pid" prop="pid">
+        <template slot-scope="scope">
+          <a href="/">{{scope.row.pid}}</a>
+        </template>
+      </el-table-column>
       <el-table-column label="名称" prop="name"></el-table-column>
       <el-table-column label="状态" prop="status" sortable="custom">
         <template slot-scope="scope">
           <span>{{scope.row.status}}</span>
         </template>
       </el-table-column>
+      <el-table-column label="创建人" prop="create_user"></el-table-column>
+      <el-table-column label="创建时间" prop="create_time"></el-table-column>
       <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
         <template slot-scope="{ row }">
           <el-button-group>
@@ -91,18 +87,16 @@
         label-width="80px"
         style="width: 400px; margin-left:50px;"
       >
+        <el-form-item label="工作流" prop="workflow">
+          <el-select v-model="temp.workflow" placeholder="请选择工作流" @change="changeWorkflow">
+            <el-option v-for="item in workflows" :key="item.id" :label="item.name" :value="item.name"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="名称" prop="name">
           <el-input v-model="temp.name"/>
         </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-switch
-            v-model="temp.status"
-            active-color="#13ce66"
-            inactive-color="#ff4949">
-          </el-switch>
-        </el-form-item>
-        <el-form-item label="备注" prop="memo">
-          <el-input v-model="temp.memo"/>
+        <el-form-item label="内容" prop="content">
+          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" v-model="temp.content"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -120,9 +114,12 @@
 <script>
   import {requestMenuButton} from '@/api/sys/menu'
   import {requestGet, requestPost, requestPut, requestDelete} from '@/api/workflow/ticket'
+  import * as workflow from '@/api/workflow/workflow'
   import Pagination from '@/components/Pagination'
   import {checkAuthAdd, checkAuthDel, checkAuthView, checkAuthUpdate} from '@/utils/permission'
-  
+  import { getConversionTime } from '@/utils'
+  import { mapGetters } from 'vuex'
+
   export default {
     name: 'workflow',
     components: {Pagination},
@@ -156,12 +153,18 @@
         rules: {
           name: [{required: true, message: '请输入名称', trigger: 'blur'}]
         },
-        multipleSelection: []
+        workflows: []
       }
     },
+    computed: {
+    ...mapGetters([
+      'username'
+    ])
+  },
     created() {
       this.getMenuButton()
       this.getList()
+      this.getWorkflowList()
     },
     methods: {
       checkPermission() {
@@ -185,6 +188,11 @@
           this.listLoading = false
         })
       },
+      getWorkflowList() {
+        workflow.requestGet().then(response => {
+          this.workflows = response
+        })
+      },
       handleFilter() {
         this.getList()
       },
@@ -200,11 +208,11 @@
       },
       resetTemp() {
         this.temp = {
+          workflow: '',
+          pid: '',
           name: '',
-          status: true,
-          memo: '',
-          action_user: '',
-          sequence: 10
+          content: '',
+          create_user: ''
         }
       },
       handleCreate() {
@@ -282,34 +290,10 @@
           })
         })
       },
-      handleSelectionChange(val) {
-        this.multipleSelection = val
-      },
-      handleBatchDel() {
-        if (this.multipleSelection.length === 0) {
-          this.$message({
-            message: '未选中任何行',
-            type: 'warning',
-            duration: 2000
-          })
-          return
-        }
-        this.$confirm('是否确定删除?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          for (const v of this.multipleSelection) {
-            requestDelete(v).then(() => {
-              this.getList()
-            })
-          }
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
-        })
+      changeWorkflow(val) {
+        this.temp.pid = getConversionTime('pid')
+        this.temp.name = val + '-' + getConversionTime()
+        this.temp.create_user = this.username
       }
     }
   }
