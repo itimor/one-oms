@@ -40,7 +40,7 @@
         </el-button>
       </el-button-group>
     </div>
-    
+
     <el-table :data="list" v-loading="listLoading" border style="width: 100%" highlight-current-row @sort-change="handleSortChange"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"/>
@@ -122,7 +122,7 @@
         </el-button>
       </div>
     </el-dialog>
-    
+
     <el-dialog title="编排步骤" :visible.sync="dialogFlowVisible">
       <el-steps :active="active">
         <el-step
@@ -145,7 +145,7 @@
           {{ "添加" }}
         </el-button>
       </div>
-      
+
       <el-table :data="steplist" border highlight-current-row>
         <el-table-column label="名称" prop="name"></el-table-column>
         <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
@@ -170,7 +170,7 @@
         </el-table-column>
       </el-table>
     </el-dialog>
-    
+
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogStepVisible">
       <el-form
         ref="stepForm"
@@ -211,7 +211,7 @@
   import * as sys from "@/api/sys/user"
   import Pagination from '@/components/Pagination'
   import {checkAuthAdd, checkAuthDel, checkAuthView, checkAuthUpdate} from '@/utils/permission'
-  
+
   export default {
     name: 'workflow',
     components: {Pagination},

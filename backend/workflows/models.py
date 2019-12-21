@@ -48,8 +48,8 @@ status_type = (
 
 
 class Ticket(models.Model):
-    workflow = models.ForeignKey(Workflow, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=u'工作流')
-    pid = models.IntegerField(unique=True, verbose_name=u'工单号')
+    workflow = models.ForeignKey(Workflow, null=True, on_delete=models.SET_NULL, verbose_name=u'工作流')
+    pid = models.IntegerField(unique=True, blank=True, verbose_name=u'工单号')
     name = models.CharField(max_length=32, unique=True, verbose_name=u'名称')
     content = models.TextField(blank=True, verbose_name=u'工单内容')
     status = models.CharField(max_length=1, choices=status_type, default=1, verbose_name=u'状态类型')
@@ -63,6 +63,7 @@ class Ticket(models.Model):
         return self.name
 
     class Meta:
+        ordering = ['-create_time']
         verbose_name = '工单'
         verbose_name_plural = '工单'
 

@@ -30,13 +30,30 @@
           {{ "添加" }}
         </el-button>
       </el-button-group>
+      <el-divider direction="vertical"/>
+      <el-button-group>
+        <el-button
+          class="filter-item"
+          type="primary"
+          icon="el-icon-search"
+          @click="handleFilter"
+        >
+          {{ "全部工单" }}
+        </el-button>
+        <el-button
+          v-if="permissionList.add"
+          class="filter-item"
+          type="success"
+          icon="el-icon-edit"
+          @click="handleCreate"
+        >
+          {{ "我的工单" }}
+        </el-button>
+      </el-button-group>
     </div>
 
     <el-table :data="list" v-loading="listLoading" border style="width: 100%" highlight-current-row @sort-change="handleSortChange">
       <el-table-column label="pid" prop="pid">
-        <template slot-scope="scope">
-          <a href="/">{{scope.row.pid}}</a>
-        </template>
       </el-table-column>
       <el-table-column label="名称" prop="name"></el-table-column>
       <el-table-column label="状态" prop="status" sortable="custom">
@@ -117,8 +134,8 @@
   import * as workflow from '@/api/workflow/workflow'
   import Pagination from '@/components/Pagination'
   import {checkAuthAdd, checkAuthDel, checkAuthView, checkAuthUpdate} from '@/utils/permission'
-  import { getConversionTime } from '@/utils'
-  import { mapGetters } from 'vuex'
+  import {getConversionTime} from '@/utils'
+  import {mapGetters} from 'vuex'
 
   export default {
     name: 'workflow',
@@ -157,10 +174,10 @@
       }
     },
     computed: {
-    ...mapGetters([
-      'username'
-    ])
-  },
+      ...mapGetters([
+        'username'
+      ])
+    },
     created() {
       this.getMenuButton()
       this.getList()
@@ -183,6 +200,7 @@
       getList() {
         this.listLoading = true
         requestGet(this.listQuery).then(response => {
+          console.log(response)
           this.list = response.results
           this.total = response.count
           this.listLoading = false
@@ -209,7 +227,6 @@
       resetTemp() {
         this.temp = {
           workflow: '',
-          pid: '',
           name: '',
           content: '',
           create_user: ''

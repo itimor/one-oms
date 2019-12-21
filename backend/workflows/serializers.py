@@ -4,7 +4,7 @@
 from workflows.models import *
 from systems.models import User
 from rest_framework import serializers
-
+from utils.index import create_time_pid
 
 class WorkflowSerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,6 +27,14 @@ class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = '__all__'
+        extra_kwargs = {'pid': {'required': False}}
+
+    def create(self, validated_data):
+        obj = Ticket.objects.create(**validated_data)
+        p = create_time_pid()
+        obj.pid = '{}{}'.format(p, obj.id)
+        obj.save()
+        return obj
 
 
 class TicketReplySerializer(serializers.ModelSerializer):
