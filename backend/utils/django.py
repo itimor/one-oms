@@ -13,6 +13,6 @@ class DisableCSRF(MiddlewareMixin):
 class CustomLimitOffsetPagination(LimitOffsetPagination):
     def get_offset(self, request):
         try:
-            return int(request.query_params['offset']) - 1
+            return (int(request.query_params['offset']) - 1) * int(request.query_params['limit'])
         except (KeyError, ValueError):
             return 1

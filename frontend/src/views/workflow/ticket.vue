@@ -34,8 +34,7 @@
       <el-button-group>
         <el-button
           class="filter-item"
-          type="primary"
-          icon="el-icon-search"
+          type="warning"
           @click="handleFilter"
         >
           {{ "全部工单" }}
@@ -43,8 +42,7 @@
         <el-button
           v-if="permissionList.add"
           class="filter-item"
-          type="success"
-          icon="el-icon-edit"
+          type="danger"
           @click="handleCreate"
         >
           {{ "我的工单" }}
@@ -53,19 +51,24 @@
     </div>
 
     <el-table :data="list" v-loading="listLoading" border style="width: 100%" highlight-current-row @sort-change="handleSortChange">
-      <el-table-column label="pid" prop="pid">
-      </el-table-column>
-      <el-table-column label="名称" prop="name"></el-table-column>
-      <el-table-column label="状态" prop="status" sortable="custom">
-        <template slot-scope="scope">
-          <span>{{scope.row.status}}</span>
+      <el-table-column label="pid" prop="pid" width="200">
+        <template slot-scope="{row}">
+          <router-link :to="'viewworkticket/' + row.pid">
+            <a style="color: #257cff">{{row.pid}}</a>
+          </router-link>
         </template>
       </el-table-column>
-      <el-table-column label="创建人" prop="create_user"></el-table-column>
-      <el-table-column label="创建时间" prop="create_time"></el-table-column>
-      <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
+      <el-table-column label="名称" prop="name"></el-table-column>
+      <el-table-column label="状态" prop="status" sortable="custom" width="160">
+        <template slot-scope="scope">
+          <span>{{scope.row.status|TicketStatusFilter}}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="创建人" prop="create_user" width="160"></el-table-column>
+      <el-table-column label="创建时间" prop="create_time" width="160"></el-table-column>
+      <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
         <template slot-scope="{ row }">
-          <el-button-group>
+          <el-button-group v-if="row.status===1">
             <el-button
               v-if="permissionList.update"
               size="small"
@@ -117,7 +120,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogStepVisible = false">
+        <el-button @click="dialogFormVisible = false">
           {{ "取消" }}
         </el-button>
         <el-button type="primary" @click="dialogStatus === 'create' ? createData() : updateData()">
@@ -200,7 +203,6 @@
       getList() {
         this.listLoading = true
         requestGet(this.listQuery).then(response => {
-          console.log(response)
           this.list = response.results
           this.total = response.count
           this.listLoading = false

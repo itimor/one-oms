@@ -182,26 +182,6 @@
   export default {
     name: 'ymenu',
     
-    filters: {
-      menuTypeFilter(val) {
-        const Map = {
-          1: '模块',
-          2: '菜单',
-          3: '操作'
-        }
-        return Map[val]
-      },
-      operateTypeFilter(val) {
-        const Map = {
-          'none': '无',
-          'add': '新增',
-          'del': '删除',
-          'update': '编辑',
-          'view': '查看',
-        }
-        return Map[val]
-      }
-    },
     components: {Pagination, SelectTree},
     data() {
       return {
