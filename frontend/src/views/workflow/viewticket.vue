@@ -75,7 +75,9 @@
           <div class="editor-container">
             <markdown-editor v-model="commentForm.content"/>
           </div>
-          <el-button type="primary" @click="submitForm">提交</el-button>
+          <div class="editor-button">
+            <el-button type="primary" @click="submitForm">提交</el-button>
+          </div>
         </el-card>
 
 
@@ -266,8 +268,12 @@
     margin: 0 20px;
     .issue {
       margin: 20px 0;
+      padding: 10px;
       .editor-container {
         padding-bottom: 10px;
+      }
+      .editor-button {
+        float: right;
       }
     }
   }
