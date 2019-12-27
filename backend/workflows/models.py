@@ -36,14 +36,12 @@ class WorkflowStep(models.Model):
 
 status_type = (
     (1, '待提交'),
-    (2, '审核中'),
-    (3, '审核驳回'),
-    (4, '执行中'),
-    (5, '执行驳回'),
-    (6, '执行完成'),
-    (7, '完成关闭'),
-    (8, '驳回关闭'),
-    (9, '撤销关闭'),
+    (2, '执行中'),
+    (3, '执行驳回'),
+    (4, '执行完成'),
+    (5, '完成关闭'),
+    (6, '驳回关闭'),
+    (7, '撤销关闭'),
 )
 
 
@@ -56,7 +54,7 @@ class Ticket(models.Model):
     create_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=u'创建者')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name=u'创建时间')
     update_time = models.DateTimeField(auto_now=True, verbose_name=u'更新时间')
-    step = models.SmallIntegerField(default=1, verbose_name=u'当前步骤')
+    step = models.SmallIntegerField(default=0, verbose_name=u'当前步骤')
     memo = models.TextField(blank=True, verbose_name=u'备注')
 
     def __str__(self):
@@ -69,7 +67,7 @@ class Ticket(models.Model):
 
 
 class TicketReply(models.Model):
-    ticket = models.ForeignKey(Ticket, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=u'创建者')
+    ticket = models.ForeignKey(Ticket, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=u'工单')
     content = models.TextField(blank=True, verbose_name=u'工单内容')
     create_user = models.ForeignKey(User, blank=True, null=True, on_delete=models.SET_NULL, verbose_name=u'创建者')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name=u'创建时间')

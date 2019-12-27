@@ -31,6 +31,7 @@ module.exports = {
       warnings: false,
       errors: true
     },
+    public: 'localhost:8080',  // 本地ip
     proxy: {
       '/api/':{
         target:'http://127.0.0.1:8000',

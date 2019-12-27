@@ -23,8 +23,6 @@ class WorkflowStepSerializer(serializers.ModelSerializer):
 class TicketSerializer(serializers.ModelSerializer):
     workflow = serializers.SlugRelatedField(queryset=Workflow.objects.all(), slug_field='name')
     create_user = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='username')
-    create_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S')
-    update_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S')
 
     class Meta:
         model = Ticket
@@ -40,6 +38,8 @@ class TicketSerializer(serializers.ModelSerializer):
 
 
 class TicketReplySerializer(serializers.ModelSerializer):
+    create_user = serializers.SlugRelatedField(queryset=User.objects.all(), slug_field='username')
+
     class Meta:
         model = TicketReply
         fields = '__all__'

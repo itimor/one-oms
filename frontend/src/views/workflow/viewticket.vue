@@ -1,51 +1,42 @@
 <template>
-  <div class="components-container" style='height:100vh'>
-    <el-card>
-      <div class="workticket">
+  <div class="app-container">
+    <div class="filter-container">
+      <div class="ticket">
         <el-card>
-          <div slot="header" class="clearfix">
-            <a class="title">{{ticketData.name}}</a>
+          <div slot="header">
+            <a class="tickettitle">{{ticketData.name}}</a>
             <hr class="heng"/>
 
             <div class="appendInfo">
-              <a class="ticketinfo create_user"><span class="han">
-                                工单创建时间：</span>{{ticketData.create_time | parseDate}}</a>
-              <a class="ticketinfo create_user"><span class="han">
-                              <a class="shu"></a>
-                                工单发起人：</span>{{ticketData.create_user}}</a>
-              <a class="ticketinfo action_user"><span class="han">
-                              <a class="shu"></a>
-                               工单指派者：</span>{{ticketData.action_user}}</a>
-              <a class="ticketinfo action_user" v-if="ticketData.ticket_status!=0">
-                <a class="shu"></a>
-                <span class="han">最新回复人：</span>{{ticketData.edit_user}}</a>
-              <a class="shu"></a>
-              <span class="han">工单类型：</span>
-              <a>{{ticketData.type}}</a>
-              <a class="shu"></a>
-              <span class="han">工单当前状态：</span>
-              <el-tag :type="STATUS_TYPE[ticketData.ticket_status]">
-                {{STATUS_TEXT[ticketData.ticket_status]}}
-              </el-tag>
-            </div>
-            <div class="appendInfo" v-if="ticketData.ticket_status!=2">
-              <span class="han">工单操作：</span>
-              <el-button v-if="role==='super'&&ticketData.ticket_status===0" type="success" size="small"
-                         @click="changeStatus">接收
-              </el-button>
-              <div class="action">
-                <el-radio-group v-model="radio_status">
-                  <el-radio label="0">不操作</el-radio>
-                  <el-radio label="2">关闭工单</el-radio>
-                  <el-radio v-if="role==='super'" label="1">更改指派人</el-radio>
-                </el-radio-group>
-                <div class="action" v-if="radio_status==1">
-                  <el-select v-model="rowdata.action_user" filterable placeholder="请选择指派人">
-                    <el-option v-for="item in users" :key="item.id" :value="item.username"></el-option>
-                  </el-select>
-                </div>
-              </div>
-
+              <table class="viewticket">
+                <tbody>
+                <tr>
+                  <td>工单号</td>
+                  <td>{{ ticketData.pid }}</td>
+                  <td>创建者</td>
+                  <td>{{ ticketData.create_user }}</td>
+                </tr>
+                <tr>
+                  <td>工单类型</td>
+                  <td>{{ ticketData.workflow }}</td>
+                  <td>创建时间</td>
+                  <td>{{ ticketData.create_time | parseDate }}</td>
+                </tr>
+                <tr>
+                  <td>流程状态</td>
+                  <td>
+                    <el-steps :active="ticketData.step" finish-status="success" process-status="finish" simple>
+                      <el-step v-for="item in steps" :title="item.name"></el-step>
+                    </el-steps>
+                  </td>
+                  <td>操作</td>
+                  <td>
+                    <el-button type="primary">转交下一步</el-button>
+                    <el-button type="danger">关闭工单</el-button>
+                  </td>
+                </tr>
+                </tbody>
+              </table>
             </div>
           </div>
 
@@ -68,77 +59,67 @@
             <hr class="heng"/>
           </div>
 
-          <div v-if='enclosureData.length>0' class="ticketenclosure">
-            <ul>
-              <li v-for="item in enclosureData" :key="item.id" v-if="item.file" style="list-style:none">
-                <i class="fa fa-paperclip"></i>
-                <a :href="apiurl + '/upload/' + item.file" :download="item.file">{{item.file.split('/')[1]}}</a>
-                <el-button type="text" icon="el-icon-delete"
-                           @click="deleteEnclosure(item.id)"></el-button>
-              </li>
-            </ul>
-          </div>
+          <!--<div class="ticketenclosure">-->
+          <!--<ul>-->
+          <!--<li v-for="item in enclosureData" :key="item.id" v-if="item.file" style="list-style:none">-->
+          <!--<i class="fa fa-paperclip"></i>-->
+          <!--<a :href="apiurl + '/upload/' + item.file" :download="item.file">{{item.file.split('/')[1]}}</a>-->
+          <!--<el-button type="text" icon="el-icon-delete"-->
+          <!--@click="deleteEnclosure(item.id)"></el-button>-->
+          <!--</li>-->
+          <!--</ul>-->
+          <!--</div>-->
         </el-card>
-      </div>
 
-      <div v-if="ticketData.ticket_status<2">
-        <el-form :model="commentForm" ref="mailcontent" label-width="80px">
-          <hr class="heng"/>
-          <el-form-item label="问题处理" prop="content">
-            <mavon-editor style="z-index: 1" v-model="mailcontent" code_style="monokai" :toolbars="toolbars"
-                          @imgAdd="imgAdd" ref="md"></mavon-editor>
-            <a class="tips"> Tip：截图可以直接 Ctrl + v 粘贴到问题处理里面</a>
-          </el-form-item>
-          <el-form-item v-if="radio_status === '0'" label="通知人" prop="action_user">
-            <el-select v-model="ticketData.create_user" filterable placeholder="请选择通知人">
-              <el-option v-for="item in users" :key="item.id" :value="item.username"></el-option>
-            </el-select>
-            <el-checkbox v-model="sendnotice">发送通知</el-checkbox>
-          </el-form-item>
-          <el-form-item v-if="radio_status === '0'" label="通知运维">
-            <el-checkbox v-model="sendop"></el-checkbox>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
-          </el-form-item>
-        </el-form>
-      </div>
+        <el-card class="issue">
+          <div class="editor-container">
+            <markdown-editor v-model="commentForm.content"/>
+          </div>
+          <el-button type="primary" @click="submitForm">提交</el-button>
+        </el-card>
 
-      <el-card class="ticketcomment" v-if="commentData.length>0">
-        处理历史记录
-        <div v-for="item in commentData" :key="item.id">
+
+        <el-card>
+          工单回复
           <hr class="heng"/>
-          <el-row>
-            <el-col :span="1">
-              <el-button type="primary" plain class="commentuser">{{item.create_user}}</el-button>
-            </el-col>
-            <el-col :span="20">
-              <div class="dialog-box">
-                <span class="bot"></span>
-                <span class="top"></span>
-                <div class="comment">
+          <ul v-for="item in replys" :key="item.id" class="am-comments-list am-comments-list-flip">
+            <li class="am-comment">
+              <el-avatar class="am-comment-avatar">{{item.create_user | AvatarFilter }}</el-avatar>
+              <div class="am-comment-main">
+                <header class="am-comment-hd">
+                  <div class="am-comment-meta">
+                    <a class="am-comment-author">{{item.create_user}}</a>
+                    回复于
+                    <time :datetime="item.create_time">{{item.create_time|parseDate}}</time>
+                  </div>
+                </header>
+
+                <div class="am-comment-bd">
                   <vue-markdown :source="item.content"></vue-markdown>
-                  <p class="commenttime">处理时间：{{item.create_time | parseDate}}</p>
                 </div>
               </div>
-            </el-col>
-          </el-row>
-        </div>
-      </el-card>
-    </el-card>
+            </li>
+          </ul>
+        </el-card>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
   import {requestMenuButton} from '@/api/sys/menu'
   import {requestGet, requestPut} from '@/api/workflow/ticket'
+  import * as workflowstep from '@/api/workflow/workflowstep'
   import * as ticketreplay from '@/api/workflow/ticketreplay'
+  import * as user from '@/api/sys/user'
   import {checkAuthAdd, checkAuthDel, checkAuthView, checkAuthUpdate} from '@/utils/permission'
   import {mapGetters} from 'vuex'
+  import MarkdownEditor from '@/components/MarkdownEditor'
+  import VueMarkdown from 'vue-markdown' // 前端解析markdown
 
   export default {
     name: 'viewworkflow',
-    components: {Pagination},
+    components: {MarkdownEditor, VueMarkdown},
     data() {
       return {
         operationList: [],
@@ -148,39 +129,39 @@
           view: false,
           update: false
         },
-        list: [],
-        total: 0,
         listLoading: true,
         loading: true,
-        listQuery: {
-          offset: 1,
-          limit: 20,
-          search: undefined,
-          ordering: undefined
-        },
-        temp: {},
-        dialogFormVisible: false,
-        dialogFlowVisible: false,
-        dialogStatus: '',
-        textMap: {
-          update: '编辑',
-          create: '添加',
-        },
-        rules: {
-          name: [{required: true, message: '请输入名称', trigger: 'blur'}]
-        },
-        workflows: []
+        ticket: '',
+        workflows: [],
+        ticketData: {},
+        steps: [],
+        commentForm: {},
+        replys: [],
+        users: []
       }
     },
     computed: {
       ...mapGetters([
         'username'
-      ])
+      ]),
+      UserAvatarFilter() {
+        return function (username) {
+          this.users.filter(user => {
+            console.log(user.username)
+            if (user.username === username) {
+              console.log(user.avatar)
+              return user.avatar
+            }
+          })
+        }
+      }
     },
     created() {
+      this.ticket = this.$route.params && this.$route.params.id
+      this.fetchData()
       this.getMenuButton()
-      this.getList()
-      this.getWorkflowList()
+      this.getTicketReplyList()
+      this.getUserList()
     },
     methods: {
       checkPermission() {
@@ -196,120 +177,99 @@
           this.checkPermission()
         })
       },
-      getList() {
+      fetchData() {
         this.listLoading = true
-        requestGet(this.listQuery).then(response => {
-          this.list = response.results
-          this.total = response.count
+        const query = {
+          id: this.ticket
+        }
+        requestGet(query).then(response => {
+          this.ticketData = response[0]
+          this.commentForm = {
+            ticket: this.ticketData.id,
+            create_user: this.username
+          }
+          this.getWorkflowStepList(this.ticketData.workflow)
           this.listLoading = false
         })
       },
-      getWorkflowList() {
-        workflow.requestGet().then(response => {
-          this.workflows = response
+      getWorkflowStepList(workflow) {
+        const query = {
+          workflow: workflow
+        }
+        workflowstep.requestGet(query).then(response => {
+          this.steps = response
         })
       },
-      handleFilter() {
-        this.getList()
-      },
-      handleSortChange(val) {
-        if (val.order === 'ascending') {
-          this.listQuery.ordering = val.prop
-        } else if (val.order === 'descending') {
-          this.listQuery.ordering = '-' + val.prop
-        } else {
-          this.listQuery.ordering = ''
-        }
-        this.getList()
+      getUserList() {
+        user.requestGet().then(response => {
+          this.users = response
+        })
       },
       resetTemp() {
-        this.temp = {
-          workflow: '',
-          name: '',
-          content: '',
-          create_user: ''
+        this.commentForm = {
+          ticket: this.ticketData.id,
+          create_user: this.username,
+          content: ''
         }
       },
-      handleCreate() {
-        this.resetTemp()
-        this.dialogStatus = 'create'
-        this.dialogFormVisible = true
-        this.loading = false
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate()
+      getTicketReplyList() {
+        const query = {
+          ticket: this.ticket
+        }
+        ticketreplay.requestGet(query).then(response => {
+          this.replys = response
         })
       },
-      createData() {
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
-            this.loading = true
-            requestPost(this.temp).then(response => {
-              this.dialogFormVisible = false
-              this.$notify({
-                title: '成功',
-                message: '创建成功',
-                type: 'success',
-                duration: 2000
-              })
-              this.getList()
-            }).catch(() => {
-              this.loading = false
-            })
-          }
-        })
-      },
-      handleUpdate(row) {
-        this.temp = row
-        this.dialogStatus = 'update'
-        this.dialogFormVisible = true
-        this.$nextTick(() => {
-          this.$refs['dataForm'].clearValidate()
-        })
-      },
-      updateData() {
-        this.$refs['dataForm'].validate((valid) => {
-          if (valid) {
-            this.loading = true
-            requestPut(this.temp.id, this.temp).then(() => {
-              this.dialogFormVisible = false
-              this.$notify({
-                title: '成功',
-                message: '更新成功',
-                type: 'success',
-                duration: 2000
-              })
-              this.getList()
-            }).catch(() => {
-              this.loading = false
-            })
-          }
-        })
-      },
-      handleDelete(row) {
-        this.$confirm('是否确定删除?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          requestDelete(row.id).then(() => {
-            this.$message({
-              message: '删除成功',
-              type: 'success'
-            })
-            this.getList()
+      submitForm() {
+        ticketreplay.requestPost(this.commentForm).then(response => {
+          this.dialogFormVisible = false
+          this.$notify({
+            title: '成功',
+            message: '创建成功',
+            type: 'success',
+            duration: 2000
           })
+          this.resetTemp()
+          this.getTicketReplyList()
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          })
+          this.loading = false
         })
-      },
-      changeWorkflow(val) {
-        this.temp.pid = getConversionTime('pid')
-        this.temp.name = val + '-' + getConversionTime()
-        this.temp.create_user = this.username
       }
     }
   }
 </script>
+
+<style lang="scss">
+  .tickettitle {
+    color: #0a76a4;
+    font-size: 24px;
+  }
+
+  .viewticket {
+    width: 100%;
+    tr {
+      td {
+        padding: 10px;
+        &:nth-child(odd) {
+          background: #a5b9f1;
+          width: 150px;
+        }
+        &:nth-child(even) {
+          background: #cccccc;
+          width: 300px;
+        }
+      }
+    }
+  }
+
+  .ticket {
+    margin: 0 20px;
+    .issue {
+      margin: 20px 0;
+      .editor-container {
+        padding-bottom: 10px;
+      }
+    }
+  }
+
+</style>

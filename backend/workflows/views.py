@@ -25,7 +25,7 @@ class TicketViewSet(viewsets.ModelViewSet):
     queryset = Ticket.objects.all()
     serializer_class = TicketSerializer
     search_fields = ['name']
-    filter_fields = ['pid', 'name', 'status']
+    filter_fields = ['id', 'pid', 'name', 'status']
     ordering_fields = ['status', 'create_time']
 
 

@@ -41,6 +41,21 @@ export function toThousandFilter(num) {
   return (+num || 0).toString().replace(/^-?\d+/g, m => m.replace(/(?=(?!\b)(\d{3})+$)/g, ','))
 }
 
+// 格式化时间
+export function parseDate(datestr) {
+  if (datestr !== undefined) {
+    const date = datestr.slice(0, 10)
+    const time = datestr.slice(11, 19)
+    return date + ' ' + time
+  }
+}
+
+export function diffDate(date) {
+  const d1 = new Date()
+  const d2 = new Date(date)
+  return Math.round(parseInt(d2 - d1) / 1000 / 60 / 60 / 24)
+}
+
 // 菜单
 export function menuTypeFilter(val) {
   const Map = {
@@ -67,14 +82,17 @@ export function operateTypeFilter(val) {
 export function TicketStatusFilter(val) {
   const Map = {
     1: '待提交',
-    2: '审核中',
-    3: '审核驳回',
-    4: '执行中',
-    5: '执行驳回',
-    6: '执行完成',
-    7: '完成关闭',
-    8: '驳回关闭',
-    9: '撤销关闭',
+    2: '执行中',
+    3: '执行驳回',
+    4: '执行完成',
+    5: '完成关闭',
+    6: '驳回关闭',
+    7: '撤销关闭',
   }
   return Map[val]
+}
+
+// 取第一个字母并大写
+export function AvatarFilter(val) {
+  return val.substr(0, 1).toUpperCase()
 }

@@ -53,8 +53,8 @@
     <el-table :data="list" v-loading="listLoading" border style="width: 100%" highlight-current-row @sort-change="handleSortChange">
       <el-table-column label="pid" prop="pid" width="200">
         <template slot-scope="{row}">
-          <router-link :to="'viewworkticket/' + row.pid">
-            <a style="color: #257cff">{{row.pid}}</a>
+          <router-link :to="'viewticket/' + row.id + '/'">
+            <a style="color: #77c2ff">{{row.pid}}</a>
           </router-link>
         </template>
       </el-table-column>
@@ -65,7 +65,11 @@
         </template>
       </el-table-column>
       <el-table-column label="创建人" prop="create_user" width="160"></el-table-column>
-      <el-table-column label="创建时间" prop="create_time" width="160"></el-table-column>
+      <el-table-column label="创建时间" prop="create_time" width="160">
+        <template slot-scope="scope">
+          <span>{{scope.row.create_time|parseDate}}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" align="center" width="200" class-name="small-padding fixed-width">
         <template slot-scope="{ row }">
           <el-button-group v-if="row.status===1">
@@ -105,7 +109,7 @@
         :model="temp"
         label-position="left"
         label-width="80px"
-        style="width: 400px; margin-left:50px;"
+        style="margin-left:50px;"
       >
         <el-form-item label="工作流" prop="workflow">
           <el-select v-model="temp.workflow" placeholder="请选择工作流" @change="changeWorkflow">
@@ -115,9 +119,9 @@
         <el-form-item label="名称" prop="name">
           <el-input v-model="temp.name"/>
         </el-form-item>
-        <el-form-item label="内容" prop="content">
-          <el-input type="textarea" :autosize="{ minRows: 4, maxRows: 8}" v-model="temp.content"/>
-        </el-form-item>
+        <div class="editor-container">
+          <markdown-editor v-model="temp.content"/>
+        </div>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -139,10 +143,11 @@
   import {checkAuthAdd, checkAuthDel, checkAuthView, checkAuthUpdate} from '@/utils/permission'
   import {getConversionTime} from '@/utils'
   import {mapGetters} from 'vuex'
+  import MarkdownEditor from '@/components/MarkdownEditor'
 
   export default {
     name: 'workflow',
-    components: {Pagination},
+    components: {Pagination, MarkdownEditor},
     data() {
       return {
         operationList: [],

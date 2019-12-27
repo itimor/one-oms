@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-const apiurl = '/ticketreplay/'
+const apiurl = '/ticketreply/'
 
 export function requestPost(data) {
   return request({

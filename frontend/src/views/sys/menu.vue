@@ -157,6 +157,13 @@
             inactive-color="#ff4949">
           </el-switch>
         </el-form-item>
+                <el-form-item label="隐藏菜单" prop="hidden">
+          <el-switch
+            v-model="temp.hidden"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+          </el-switch>
+        </el-form-item>
         <el-form-item label="备注" prop="memo">
           <el-input v-model="temp.memo"/>
         </el-form-item>
@@ -304,6 +311,7 @@
           type: '2',
           operate: 'none',
           status: true,
+          hidden: false,
           memo: '',
         }
       },
