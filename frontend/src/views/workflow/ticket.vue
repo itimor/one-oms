@@ -125,7 +125,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
-          {{ "取消" }}
+          {{ "保存草稿" }}
         </el-button>
         <el-button type="primary" @click="dialogStatus === 'create' ? createData() : updateData()">
           {{ "确定" }}

@@ -87,7 +87,6 @@ export function TicketStatusFilter(val) {
     4: '执行完成',
     5: '完成关闭',
     6: '驳回关闭',
-    7: '撤销关闭',
   }
   return Map[val]
 }

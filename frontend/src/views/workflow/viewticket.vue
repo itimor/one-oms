@@ -31,8 +31,9 @@
                   </td>
                   <td>操作</td>
                   <td>
-                    <el-button type="primary">转交下一步</el-button>
-                    <el-button type="danger">关闭工单</el-button>
+                    <el-button v-if="ticketData.status<4" type="primary">转交下一步</el-button>
+                    <el-button type="warning">驳回工单</el-button>
+                    <el-button v-if="username===ticketData.create_user" type="danger">关闭工单</el-button>
                   </td>
                 </tr>
                 </tbody>
