@@ -40,7 +40,7 @@
         </el-button>
       </el-button-group>
     </div>
-    
+
     <el-table :data="list" v-loading="listLoading" border style="width: 100%" highlight-current-row @sort-change="handleSortChange"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"/>
@@ -49,7 +49,7 @@
       <el-table-column label="备注" prop="memo"></el-table-column>
       <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
         <template slot-scope="{ row }">
-          <el-button-group>
+          <el-button-group v-show="row.id !== 1">
             <el-button
               v-if="permissionList.update"
               size="small"
@@ -103,6 +103,9 @@
         <el-form-item label="名称" prop="name">
           <el-input v-model="temp.name"/>
         </el-form-item>
+        <el-form-item label="代码" prop="code">
+          <el-input v-model="temp.code"/>
+        </el-form-item>
         <el-form-item label="排序值" prop="sequence">
           <el-input v-model="temp.sequence"/>
         </el-form-item>
@@ -136,12 +139,11 @@
 </template>
 
 <script>
-  import {requestGet as requestAllMenu, requestMenuButton} from '@/api/sys/menu'
-  import {requestGet, requestPost, requestPut, requestDelete} from '@/api/sys/role'
+  import {role, menu, auth} from '@/api/all'
   import Pagination from '@/components/Pagination'
   import SelectTree from '@/components/TreeSelect'
   import {checkAuthAdd, checkAuthDel, checkAuthView, checkAuthUpdate} from '@/utils/permission'
-  
+
   export default {
     name: 'role',
     components: {Pagination, SelectTree},
@@ -151,7 +153,7 @@
         valueIdSelectTree2: 0,
         propsSelectTree: {
           value: 'id',
-          label: 'memo',
+          label: 'name',
           children: 'children',
           placeholder: '父级'
         },
@@ -185,6 +187,7 @@
         },
         rules: {
           name: [{required: true, message: '请输入名称', trigger: 'blur'}],
+          code: [{required: true, message: '请输入代码', trigger: 'blur'}],
         },
         multipleSelection: [],
         treeProps: {
@@ -192,11 +195,12 @@
           label: 'name'
         },
         treeData: [],
+        allrole: [],
       }
     },
     computed: {
       optionDataSelectTree2() {
-        const cloneData = this.list
+        const cloneData = this.allrole
         return cloneData.filter(father => {
           const branchArr = cloneData.filter(child => father.id === child.parent)
           branchArr.length > 0 ? father.children = branchArr : ''
@@ -208,6 +212,7 @@
       this.getMenuButton()
       this.getList()
       this.getTreeData()
+      this.getAllRole()
     },
     methods: {
       checkPermission() {
@@ -217,18 +222,23 @@
         this.permissionList.update = checkAuthUpdate(this.operationList)
       },
       getMenuButton() {
-        requestMenuButton('role').then(response => {
-          this.operationList = response.data
+        auth.requestMenuButton('role').then(response => {
+          this.operationList = response.results
         }).then(() => {
           this.checkPermission()
         })
       },
       getList() {
         this.listLoading = true
-        requestGet(this.listQuery).then(response => {
+        role.requestGet(this.listQuery).then(response => {
           this.list = response.results
           this.total = response.count
           this.listLoading = false
+        })
+      },
+      getAllRole() {
+        role.requestGet().then(response => {
+          this.allrole = response.results
         })
       },
       handleFilter() {
@@ -247,6 +257,7 @@
       resetTemp() {
         this.temp = {
           name: '',
+          code: '',
           sequence: '',
           menus: [],
           memo: '',
@@ -267,7 +278,7 @@
             this.loading = true
             this.temp.parent = this.valueIdSelectTree2
             this.temp.menus = this.$refs.tree.getCheckedKeys()
-            requestPost(this.temp).then(response => {
+            role.requestPost(this.temp).then(response => {
               this.dialogFormVisible = false
               this.$notify({
                 title: '成功',
@@ -298,7 +309,7 @@
             this.loading = true
             this.temp.parent = this.valueIdSelectTree2
             this.temp.menus = this.$refs.tree.getCheckedKeys()
-            requestPut(this.temp.id, this.temp).then(() => {
+            role.requestPut(this.temp.id, this.temp).then(() => {
               this.dialogFormVisible = false
               this.$notify({
                 title: '成功',
@@ -318,7 +329,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          requestDelete(row.id).then(() => {
+          role.requestDelete(row.id).then(() => {
             this.$message({
               message: '删除成功',
               type: 'success'
@@ -357,11 +368,11 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          for (const v of this.multipleSelection) {
-            requestDelete(v).then(() => {
-              this.getList()
-            })
-          }
+          const ids = this.multipleSelection.map(x => x.id)
+          role.requestBulkDelete(ids).then(response => {
+            console.log(response.results)
+            this.getList()
+          })
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -370,8 +381,8 @@
         })
       },
       getTreeData() {
-        requestAllMenu().then(response => {
-          this.treeData = this.optionDataSelectTree(response)
+        menu.requestGet().then(response => {
+          this.treeData = this.optionDataSelectTree(response.results)
         })
       },
       optionDataSelectTree(data) {

@@ -100,7 +100,7 @@ import Hamburger from '@/components/Hamburger'
 import Screenfull from '@/components/Screenfull'
 import LangSelect from '@/components/LangSelect'
 import Search from '@/components/HeaderSearch'
-import { changepwd } from '@/api/sys/auth'
+import { auth } from '@/api/all'
 
 export default {
   components: {
@@ -165,7 +165,7 @@ export default {
             return
           }
           this.loading = true
-          changepwd(this.temp).then(response => {
+          auth.changepwd(this.temp).then(response => {
             this.dialogFormVisible = false
             this.$notify({
               title: '成功',

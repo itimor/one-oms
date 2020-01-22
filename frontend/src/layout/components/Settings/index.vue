@@ -87,16 +87,17 @@ export default {
   font-size: 14px;
   line-height: 1.5;
   word-wrap: break-word;
+  background-color: #e8f4ff94;
 
   .drawer-title {
     margin-bottom: 12px;
-    color: rgba(0, 0, 0, .85);
+    color: #a030ed;
     font-size: 14px;
     line-height: 22px;
   }
 
   .drawer-item {
-    color: rgba(0, 0, 0, .65);
+    color: #ed5e1c;
     font-size: 14px;
     padding: 12px 0;
   }

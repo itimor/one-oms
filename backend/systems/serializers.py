@@ -6,6 +6,13 @@ from rest_framework import serializers
 from systems.menus import init_menu
 
 
+class UserReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+        depth = 1
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -39,9 +46,21 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 
+class RoleReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Role
+        fields = '__all__'
+
+
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
+        fields = '__all__'
+
+
+class MenuReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Menu
         fields = '__all__'
 
 
@@ -55,3 +74,16 @@ class MenuSerializer(serializers.ModelSerializer):
         if obj.type == 2:
             init_menu(obj)
         return obj
+
+
+class ApiPermReadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ApiPerm
+        fields = '__all__'
+        depth = 1
+
+
+class ApiPermSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ApiPerm
+        fields = '__all__'

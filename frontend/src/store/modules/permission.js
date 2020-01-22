@@ -172,9 +172,14 @@ export const componentsMap = {
   user: () => import('@/views/sys/user'), // 后台管理员
   role: () => import('@/views/sys/role'), // 后台角色
   icon: () => import('@/views/svg-icons/index'), // 图标管理
-  test: () => import('@/views/sys/test'), // test
-  // workflow
-  workflow: () => import('@/views/workflow/workflow'), // 工作流
-  ticket: () => import('@/views/workflow/ticket'), // 工单
-  viewticket: () => import('@/views/workflow/viewticket'), // 查看工单
+
+  // domain
+  cdn: () => import('@/views/domain/cdn'), // cdn
+  ipool: () => import('@/views/domain/ipool'), // IP地址池
+  brand: () => import('@/views/domain/brand'), // 品牌项目
+  domains: () => import('@/views/domain/domains'), // IP地址池
+
+  // tool
+  auditlog: () => import('@/views/tool/auditlog'), // 审计日志
+  test: () => import('@/views/tool/simple'), // test
 }

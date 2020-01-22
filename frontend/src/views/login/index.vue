@@ -47,11 +47,6 @@
         </span>
       </el-form-item>
 
-      <div class="choose-user">
-        <el-button type="primary" plain @click="handleChoose('admin')">管理员</el-button>
-        <el-button type="success" plain @click="handleChoose('test')">普通人</el-button>
-      </div>
-
       <el-button
         :loading="loading"
         type="primary"
@@ -147,19 +142,6 @@
         this.$nextTick(() => {
           this.$refs.password.focus();
         });
-      },
-      handleChoose(user) {
-        if (user == "admin") {
-          this.loginForm = {
-            username: "admin",
-            password: "qwert@12345"
-          };
-        } else {
-          this.loginForm = {
-            username: "test",
-            password: "qqqqq@11111"
-          };
-        }
       },
       handleLogin() {
         this.$refs.loginForm.validate(valid => {

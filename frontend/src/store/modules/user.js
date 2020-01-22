@@ -1,6 +1,6 @@
-import { login, logout, getInfo } from '@/api/sys/auth'
+import { auth } from '@/api/all'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import router, { resetRouter } from '@/router'
+import { resetRouter } from '@/router'
 
 const state = {
   token: getToken(),
@@ -33,7 +33,7 @@ const actions = {
   login({ commit }, userInfo) {
     const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
+      auth.login({ username: username.trim(), password: password }).then(response => {
         commit('SET_TOKEN', response.token)
         setToken(response.token)
         resolve()
@@ -47,8 +47,8 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
+      auth.getInfo(state.token).then(response => {
+        const data = response.results
         if (!data) {
           reject('Verification failed, please Login again.')
         }

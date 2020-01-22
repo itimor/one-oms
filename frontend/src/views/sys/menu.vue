@@ -40,7 +40,7 @@
         </el-button>
       </el-button-group>
     </div>
-    
+
     <el-table :data="list" v-loading="listLoading" border style="width: 100%" highlight-current-row @sort-change="handleSortChange"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"/>
@@ -64,7 +64,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
         <template slot-scope="{ row }">
-          <el-button-group>
+          <el-button-group v-show="row.id !== 1">
             <el-button
               v-if="permissionList.update"
               size="small"
@@ -181,14 +181,14 @@
 </template>
 
 <script>
-  import {requestGet, requestPost, requestPut, requestDelete, requestMenuButton} from '@/api/sys/menu'
+  import {menu, auth} from '@/api/all'
   import Pagination from '@/components/Pagination'
   import SelectTree from '@/components/TreeSelect'
   import {checkAuthAdd, checkAuthDel, checkAuthView, checkAuthUpdate} from '@/utils/permission'
-  
+
   export default {
     name: 'ymenu',
-    
+
     components: {Pagination, SelectTree},
     data() {
       return {
@@ -249,12 +249,13 @@
           {key: 'update', display_name: '编辑'},
           {key: 'view', display_name: '查看'},
         ],
-        showOpera: false
+        showOpera: false,
+        allmean: [],
       }
     },
     computed: {
       optionDataSelectTree() {
-        const cloneData = this.list
+        const cloneData = this.allmean
         return cloneData.filter(father => {
           const branchArr = cloneData.filter(child => father.id === child.parent)
           branchArr.length > 0 ? father.children = branchArr : ''
@@ -265,6 +266,7 @@
     created() {
       this.getMenuButton()
       this.getList()
+      this.getAllMean()
     },
     methods: {
       checkPermission() {
@@ -274,18 +276,23 @@
         this.permissionList.update = checkAuthUpdate(this.operationList)
       },
       getMenuButton() {
-        requestMenuButton('menu').then(response => {
-          this.operationList = response.data
+        auth.requestMenuButton('menu').then(response => {
+          this.operationList = response.results
         }).then(() => {
           this.checkPermission()
         })
       },
       getList() {
         this.listLoading = true
-        requestGet(this.listQuery).then(response => {
+        menu.requestGet(this.listQuery).then(response => {
           this.list = response.results
           this.total = response.count
           this.listLoading = false
+        })
+      },
+      getAllMean() {
+        menu.requestGet().then(response => {
+          this.allmean = response.results
         })
       },
       handleFilter() {
@@ -308,11 +315,12 @@
           curl: '',
           icon: 'list',
           sequence: '',
-          type: '2',
+          type: 2,
           operate: 'none',
           status: true,
           hidden: false,
           memo: '',
+          parent: 0
         }
       },
       handleCreate() {
@@ -329,7 +337,7 @@
           if (valid) {
             this.loading = true
             this.temp.parent = this.valueIdSelectTree2
-            requestPost(this.temp).then(response => {
+            menu.requestPost(this.temp).then(response => {
               this.dialogFormVisible = false
               this.$notify({
                 title: '成功',
@@ -358,7 +366,7 @@
           if (valid) {
             this.loading = true
             this.temp.parent = this.valueIdSelectTree2
-            requestPut(this.temp.id, this.temp).then(() => {
+            menu.requestPut(this.temp.id, this.temp).then(() => {
               this.dialogFormVisible = false
               this.$notify({
                 title: '成功',
@@ -378,7 +386,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          requestDelete(row.id).then(() => {
+          menu.requestDelete(row.id).then(() => {
             this.$message({
               message: '删除成功',
               type: 'success'
@@ -425,11 +433,11 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          for (const v of this.multipleSelection) {
-            requestDelete(v).then(() => {
-              this.getList()
-            })
-          }
+          const ids = this.multipleSelection.map(x => x.id)
+          menu.requestBulkDelete(ids).then(response => {
+            console.log(response.results)
+            this.getList()
+          })
         }).catch(() => {
           this.$message({
             type: 'info',

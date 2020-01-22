@@ -2,16 +2,27 @@
 # author: timor
 
 from rest_framework import serializers
-from tools.models import Upload, FileUpload
+from tools.models import *
 
 
 class UploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Upload
-        fields = ['url', 'id', 'username', 'file', 'filename', 'filepath', 'archive', 'type', 'size', 'create_time']
+        fields = '__all__'
 
 
 class FileUploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = FileUpload
-        fields = ['url', 'id', 'file']
+        fields = '__all__'
+
+
+class RequestEventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RequestEvent
+        fields = '__all__'
+
+class SimpleSerializer(serializers.ModelSerializer):
+    class Meta(object):
+        model = SimpleModel
+        fields = '__all__'

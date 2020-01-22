@@ -36,12 +36,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',  # api
+    'rest_framework',  # restful api
     'django_filters',  # 过滤
     'corsheaders',  # 跨域
+    'common',
     'tools',
     'systems',
-    'workflows',
+    'domains',
 ]
 
 MIDDLEWARE = [
@@ -61,7 +62,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         # 'DIRS': [],
-        'DIRS': ['../frontend/dist'],
+        'DIRS': ['./templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -82,7 +83,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, '../core.db'),
+        'NAME': os.path.join(BASE_DIR, './core.db'),
     }
 }
 
@@ -108,14 +109,10 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
 LANGUAGE_CODE = 'zh-Hans'
-
 TIME_ZONE = 'Asia/Shanghai'
-
 USE_I18N = True
-
 USE_L10N = True
-
-USE_TZ = False
+USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
@@ -123,7 +120,7 @@ USE_TZ = False
 STATIC_URL = '/static/'
 # Add for vuejs
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "../frontend/dist"),
+    os.path.join(BASE_DIR, "./templates"),
 ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, '../upload')
@@ -131,9 +128,10 @@ MEDIA_URL = '/upload/'
 
 REST_USE_JWT = True
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'utils.django.CustomLimitOffsetPagination',
+    'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S",
+    'DEFAULT_PAGINATION_CLASS': 'common.django.CustomLimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     ),
     'DEFAULT_FILTER_BACKENDS': (
         'django_filters.rest_framework.DjangoFilterBackend',
@@ -145,6 +143,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ),
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer',),
 }
 
 JWT_AUTH = {

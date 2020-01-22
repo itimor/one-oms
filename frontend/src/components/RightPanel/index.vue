@@ -7,6 +7,9 @@
       </div>
       <div class="rightPanel-items">
         <slot />
+        <div class="rightPanel-button">
+          <img src="http://img.adoutu.com/picture/1538925835348.jpg" alt="" width="100%">
+        </div>
       </div>
     </div>
   </div>
@@ -103,8 +106,17 @@ export default {
   box-shadow: 0px 0px 15px 0px rgba(0, 0, 0, .05);
   transition: all .25s cubic-bezier(.7, .3, .1, 1);
   transform: translate(100%);
-  background: #fff;
-  z-index: 40000;
+  z-index: 30000;
+  background-image: url('https://www.5dmu.com/zb_users/upload/2019/06/201906051559743778734609.jpg');
+  background-size:cover;
+  background-position: center;
+  .rightPanel-button{
+    display: block;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+  }
 }
 .show {
   transition: all .3s cubic-bezier(.7, .3, .1, 1);
@@ -130,6 +142,7 @@ export default {
   pointer-events: auto;
   cursor: pointer;
   color: #fff;
+  background-color: #d26a7a !important;
   line-height: 48px;
   i {
     font-size: 24px;

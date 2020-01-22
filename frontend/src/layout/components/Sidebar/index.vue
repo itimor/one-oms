@@ -9,6 +9,7 @@
         :text-color="variables.menuText"
         :active-text-color="variables.menuActiveText"
         :collapse-transition="false"
+        :unique-opened="true"
         mode="vertical"
       >
         <sidebar-item v-for="route in permission_routes" :key="route.path" :item="route" :base-path="route.path" />

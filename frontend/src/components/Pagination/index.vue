@@ -16,7 +16,7 @@
 
 <script>
   import {scrollTo} from '@/utils/scrollTo'
-  
+
   export default {
     name: 'Pagination',
     props: {
@@ -35,7 +35,7 @@
       pageSizes: {
         type: Array,
         default() {
-          return [10, 20, 30, 50]
+          return [20, 50, 80, 100]
         }
       },
       layout: {
@@ -100,7 +100,7 @@
     background: #fff;
     padding: 32px 16px;
   }
-  
+
   .pagination-container.hidden {
     display: none;
   }

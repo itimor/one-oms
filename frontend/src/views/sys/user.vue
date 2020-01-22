@@ -40,16 +40,26 @@
         </el-button>
       </el-button-group>
     </div>
-    
+
     <el-table :data="list" v-loading="listLoading" border style="width: 100%" highlight-current-row @sort-change="handleSortChange"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"/>
       <el-table-column label="用户名" prop="username"></el-table-column>
       <el-table-column label="真实姓名" prop="realname"></el-table-column>
-      <el-table-column label="邮箱" prop="email"></el-table-column>
+      <el-table-column label="角色" prop="roles">
+        <template slot-scope="scope">
+          <el-tag v-for="item in scope.row.roles" :key="item.id" size="medium">{{item.name}}</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="头像" align="center">
         <template slot-scope="scope">
-          <el-avatar :src="scope.row.avatar"/>
+          <el-popover
+            placement="top"
+            width="200"
+            trigger="hover">
+            <el-image :src="scope.row.avatar" fit="cover"></el-image>
+            <el-avatar slot="reference" :src="scope.row.avatar"></el-avatar>
+          </el-popover>
         </template>
       </el-table-column>
       <el-table-column label="状态" prop="is_active" sortable="custom">
@@ -59,7 +69,7 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
         <template slot-scope="{ row }">
-          <el-button-group  v-show="!row.is_admin">
+          <el-button-group v-show="!row.is_admin">
             <el-button
               v-if="permissionList.update"
               size="small"
@@ -160,12 +170,10 @@
 </template>
 
 <script>
-  import {requestMenuButton} from '@/api/sys/menu'
-  import {requestGet as requestAllRole} from '@/api/sys/role'
-  import {requestGet, requestPost, requestPut, requestDelete} from '@/api/sys/user'
+  import {user, role, auth} from '@/api/all'
   import Pagination from '@/components/Pagination'
   import {checkAuthAdd, checkAuthDel, checkAuthView, checkAuthUpdate} from '@/utils/permission'
-  
+
   export default {
     name: 'user',
     components: {Pagination},
@@ -202,7 +210,7 @@
         multipleSelection: [],
         treeProps: {
           children: 'children',
-          label: 'memo'
+          label: 'name'
         },
         treeData: [],
       }
@@ -220,15 +228,15 @@
         this.permissionList.update = checkAuthUpdate(this.operationList)
       },
       getMenuButton() {
-        requestMenuButton('user').then(response => {
-          this.operationList = response.data
+        auth.requestMenuButton('user').then(response => {
+          this.operationList = response.results
         }).then(() => {
           this.checkPermission()
         })
       },
       getList() {
         this.listLoading = true
-        requestGet(this.listQuery).then(response => {
+        user.requestGet(this.listQuery).then(response => {
           this.list = response.results
           this.total = response.count
           this.listLoading = false
@@ -272,7 +280,7 @@
           if (valid) {
             this.loading = true
             this.temp.roles = this.$refs.tree.getCheckedKeys()
-            requestPost(this.temp).then(response => {
+            user.requestPost(this.temp).then(response => {
               this.dialogFormVisible = false
               this.$notify({
                 title: '成功',
@@ -301,7 +309,7 @@
           if (valid) {
             this.loading = true
             this.temp.roles = this.$refs.tree.getCheckedKeys()
-            requestPut(this.temp.id, this.temp).then(() => {
+            user.requestPut(this.temp.id, this.temp).then(() => {
               this.dialogFormVisible = false
               this.$notify({
                 title: '成功',
@@ -321,7 +329,7 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          requestDelete(row.id).then(() => {
+          user.requestDelete(row.id).then(() => {
             this.$message({
               message: '删除成功',
               type: 'success'
@@ -352,11 +360,11 @@
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          for (const v of this.multipleSelection) {
-            requestDelete(v).then(() => {
-              this.getList()
-            })
-          }
+          const ids = this.multipleSelection.map(x => x.id)
+          user.requestBulkDelete(ids).then(response => {
+            console.log(response.results)
+            this.getList()
+          })
         }).catch(() => {
           this.$message({
             type: 'info',
@@ -365,8 +373,8 @@
         })
       },
       getTreeData() {
-        requestAllRole().then(response => {
-          this.treeData = this.optionDataSelectTree(response)
+        role.requestGet().then(response => {
+          this.treeData = this.optionDataSelectTree(response.results)
         })
       },
       optionDataSelectTree(data) {

@@ -3,6 +3,7 @@
 
 from django.db import models
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
+from common.models import BaseModel
 
 
 class UserManager(BaseUserManager):
@@ -30,15 +31,12 @@ class UserManager(BaseUserManager):
         return user
 
 
-class User(AbstractBaseUser):
+class User(BaseModel, AbstractBaseUser):
     username = models.CharField(max_length=32, unique=True, db_index=True)
     realname = models.CharField(max_length=32, blank=True, verbose_name=u'真实名字')
     avatar = models.CharField(max_length=255, default='http://m.imeitou.com/uploads/allimg/2017110610/b3c433vwhsk.jpg')
     roles = models.ManyToManyField('Role', blank=True, verbose_name=u'角色')
-    create_date = models.DateField(auto_now_add=True, verbose_name=u'创建时间')
-    is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
-    memo = models.TextField(blank=True, verbose_name=u'备注')
 
     USERNAME_FIELD = 'username'  # 必须有一个唯一标识--USERNAME_FIELD
 
@@ -56,12 +54,13 @@ class User(AbstractBaseUser):
     objects = UserManager()  # 创建用户
 
 
-class Role(models.Model):
-    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, default='1', verbose_name=u'父级角色')
+class Role(BaseModel):
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, default='0', verbose_name=u'父级角色')
     name = models.CharField(max_length=32, unique=True, verbose_name=u'名称')
+    code = models.CharField(max_length=32, unique=True, verbose_name=u'代码')
     sequence = models.SmallIntegerField(default=0, verbose_name=u'排序值')
     menus = models.ManyToManyField('Menu', blank=True, verbose_name=u'菜单')
-    memo = models.TextField(blank=True, verbose_name=u'备注')
+    apiperms = models.ManyToManyField('ApiPerm', blank=True, verbose_name=u'api权限')
 
     def __str__(self):
         return "{parent}{name}".format(name=self.name, parent="%s-->" % self.parent.name if self.parent else '')
@@ -86,8 +85,8 @@ operate_type = (
 )
 
 
-class Menu(models.Model):
-    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, default='1', verbose_name=u'父级菜单')
+class Menu(BaseModel):
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, default='0', verbose_name=u'父级菜单')
     name = models.CharField(max_length=32, verbose_name=u'菜单名称')
     code = models.CharField(max_length=32, verbose_name=u'菜单代码')
     curl = models.CharField(max_length=101, verbose_name=u'菜单URL')
@@ -97,12 +96,25 @@ class Menu(models.Model):
     type = models.CharField(max_length=1, choices=menu_type, default=2, verbose_name=u'菜单类型')
     status = models.BooleanField(default=True, verbose_name=u'状态')
     operate = models.CharField(max_length=5, choices=operate_type, default='none', verbose_name=u'操作类型')
-    memo = models.TextField(blank=True, verbose_name=u'备注')
 
     def __str__(self):
         return "{parent}{name}".format(name=self.name, parent="%s-->" % self.parent.name if self.parent else '')
 
     class Meta:
-        ordering = ['id', 'sequence']
+        ordering = ['sequence', 'id', ]
         verbose_name = u'角色'
         verbose_name_plural = u'角色'
+
+
+class ApiPerm(BaseModel):
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, default='0', verbose_name=u'父级角色')
+    name = models.CharField(max_length=32, unique=True, verbose_name=u'名称')
+    method = models.CharField(max_length=32, verbose_name=u'请求方法')
+    curl = models.CharField(max_length=101, verbose_name=u'请求路径')
+
+    def __str__(self):
+        return "{parent}{name}".format(name=self.name, parent="%s-->" % self.parent.name if self.parent else '')
+
+    class Meta:
+        verbose_name = u'api权限'
+        verbose_name_plural = u'api权限'

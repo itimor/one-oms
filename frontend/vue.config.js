@@ -7,8 +7,7 @@ function resolve(dir) {
 }
 
 //const name = pkg.name || 'vue-element-admin' // page title
-const name = '后台管理系统' // page title
-const port = 8080 // dev port
+const name = 'KK域名管理系统' // page title
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
@@ -20,18 +19,19 @@ module.exports = {
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
   publicPath: '/',
-  outputDir: 'dist',
+  outputDir: '../backend/templates',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
   devServer: {
-    port: port,
+    host: '127.0.0.1',
+    port: 8080,
     open: true,
     overlay: {
       warnings: false,
       errors: true
     },
-    public: 'localhost:8080',  // 本地ip
+    public: 'http://127.0.0.1:8080',  // 本地ip
     proxy: {
       '/api/':{
         target:'http://127.0.0.1:8000',
