@@ -101,7 +101,7 @@ class Menu(BaseModel):
         return "{parent}{name}".format(name=self.name, parent="%s-->" % self.parent.name if self.parent else '')
 
     class Meta:
-        ordering = ['sequence', 'id', ]
+        ordering = ['id', ]
         verbose_name = u'角色'
         verbose_name_plural = u'角色'
 

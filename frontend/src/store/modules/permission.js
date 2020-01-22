@@ -173,12 +173,6 @@ export const componentsMap = {
   role: () => import('@/views/sys/role'), // 后台角色
   icon: () => import('@/views/svg-icons/index'), // 图标管理
 
-  // domain
-  cdn: () => import('@/views/domain/cdn'), // cdn
-  ipool: () => import('@/views/domain/ipool'), // IP地址池
-  brand: () => import('@/views/domain/brand'), // 品牌项目
-  domains: () => import('@/views/domain/domains'), // IP地址池
-
   // tool
   auditlog: () => import('@/views/tool/auditlog'), // 审计日志
   test: () => import('@/views/tool/simple'), // test

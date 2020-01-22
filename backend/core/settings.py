@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     'common',
     'tools',
     'systems',
-    'domains',
 ]
 
 MIDDLEWARE = [

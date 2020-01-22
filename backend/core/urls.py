@@ -17,8 +17,6 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
                   url(r'api/tool/', include(('tools.urls', 'tools'), namespace="tools")),
                   # 系统管理
                   url(r'api/sys/', include(('systems.urls', 'systems'), namespace="systems")),
-                  # 域名管理
-                  url(r'api/domain/', include(('domains.urls', 'domains'), namespace="domains")),
 
                   # 静态模板
                   url(r'', TemplateView.as_view(template_name="index.html")),
