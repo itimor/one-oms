@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      title: 'KK域名管理',
+      title: '后台管理',
       logo: '/favicon.ico'
     }
   }
