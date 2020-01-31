@@ -15,8 +15,7 @@
           <div class="info-container">
             <el-row>
               <span class="display_name">Hi！{{ username }}</span>
-              <span class="introduction">{{ introduction }}</span>
-              <img :src="emptyGif" class="emptyGif">
+              <span class="introduction">{{ memo }}</span>
             </el-row>
           </div>
         </el-col>
@@ -96,7 +95,7 @@
       ...mapGetters([
         'username',
         'avatar',
-        'introduction',
+        'memo',
       ])
     },
     methods: {

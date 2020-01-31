@@ -48,8 +48,9 @@ class User(BaseModel, AbstractBaseUser):
         return self.is_admin
 
     class Meta:
-        verbose_name = u'用户'
-        verbose_name_plural = u'用户'
+        ordering = ['-create_time']
+        verbose_name = '用户'
+        verbose_name_plural = verbose_name
 
     objects = UserManager()  # 创建用户
 
@@ -66,8 +67,9 @@ class Role(BaseModel):
         return "{parent}{name}".format(name=self.name, parent="%s-->" % self.parent.name if self.parent else '')
 
     class Meta:
-        verbose_name = u'角色'
-        verbose_name_plural = u'角色'
+        ordering = ['-create_time']
+        verbose_name = '角色'
+        verbose_name_plural = verbose_name
 
 
 menu_type = (
@@ -102,8 +104,8 @@ class Menu(BaseModel):
 
     class Meta:
         ordering = ['id', ]
-        verbose_name = u'角色'
-        verbose_name_plural = u'角色'
+        verbose_name = '角色'
+        verbose_name_plural = verbose_name
 
 
 class ApiPerm(BaseModel):
@@ -116,5 +118,6 @@ class ApiPerm(BaseModel):
         return "{parent}{name}".format(name=self.name, parent="%s-->" % self.parent.name if self.parent else '')
 
     class Meta:
+        ordering = ['-create_time']
         verbose_name = u'api权限'
-        verbose_name_plural = u'api权限'
+        verbose_name_plural = verbose_name

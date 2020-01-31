@@ -29,16 +29,18 @@ class Upload(BaseModel):
         return self.filepath
 
     class Meta:
-        verbose_name = u'文件上传'
-        verbose_name_plural = u'文件上传'
+        ordering = ['-create_time']
+        verbose_name = '文件上传'
+        verbose_name_plural = verbose_name
 
 
-class FileUpload(models.Model):
+class FileUpload(BaseModel):
     file = models.FileField(upload_to=("./tmp"), blank=True, verbose_name=u'上传文件')
 
     class Meta:
-        verbose_name = u'文件上传'
-        verbose_name_plural = u'文件上传'
+        ordering = ['-create_time']
+        verbose_name = '文件上传'
+        verbose_name_plural = verbose_name
 
 
 class RequestEvent(BaseModel):
@@ -54,5 +56,10 @@ class RequestEvent(BaseModel):
         verbose_name_plural = verbose_name
 
 
-class SimpleModel(models.Model):
+class SimpleModel(BaseModel):
     name = models.CharField(max_length=255, unique=True, verbose_name='名称')
+
+    class Meta:
+        ordering = ['-create_time']
+        verbose_name = '简单模型'
+        verbose_name_plural = verbose_name

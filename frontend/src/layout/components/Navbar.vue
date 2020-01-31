@@ -1,3 +1,4 @@
+c
 <template>
   <div class="navbar">
     <hamburger
@@ -7,15 +8,19 @@
       @toggleClick="toggleSideBar"
     />
 
-    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
+    <breadcrumb id="breadcrumb-container" class="breadcrumb-container"/>
 
     <div class="right-menu">
       <template v-if="device !== 'mobile'">
-        <search id="header-search" class="right-menu-item" />
+        <div class="right-menu-item">
+          <a style="color: #a45157">{{ip}}</a>
+          <a style="color: #0a76a4">{{cur_date}}</a>
+        </div>
+        <search id="header-search" class="right-menu-item"/>
 
-        <screenfull id="screenfull" class="right-menu-item hover-effect" />
+        <screenfull id="screenfull" class="right-menu-item hover-effect"/>
 
-        <lang-select class="right-menu-item hover-effect" />
+        <lang-select class="right-menu-item hover-effect"/>
       </template>
 
       <el-dropdown
@@ -23,7 +28,7 @@
         trigger="click"
       >
         <div class="avatar-wrapper">
-          <el-avatar :src="avatar" />
+          <el-avatar :src="avatar"/>
         </div>
         <el-dropdown-menu slot="dropdown">
           <router-link to="/">
@@ -55,12 +60,12 @@
         style="width: 400px; margin-left:50px;"
       >
         <!--<el-form-item label="原密码" prop="old_password">-->
-          <!--<el-input-->
-            <!--v-model="temp.old_password"-->
-            <!--show-password-->
-            <!--minlength="6"-->
-            <!--maxlength="20"-->
-          <!--/>-->
+        <!--<el-input-->
+        <!--v-model="temp.old_password"-->
+        <!--show-password-->
+        <!--minlength="6"-->
+        <!--maxlength="20"-->
+        <!--/>-->
         <!--</el-form-item>-->
         <el-form-item label="新密码" prop="new_password">
           <el-input
@@ -94,93 +99,101 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-import Breadcrumb from '@/components/Breadcrumb'
-import Hamburger from '@/components/Hamburger'
-import Screenfull from '@/components/Screenfull'
-import LangSelect from '@/components/LangSelect'
-import Search from '@/components/HeaderSearch'
-import { auth } from '@/api/all'
+  import {mapGetters} from 'vuex'
+  import Breadcrumb from '@/components/Breadcrumb'
+  import Hamburger from '@/components/Hamburger'
+  import Screenfull from '@/components/Screenfull'
+  import LangSelect from '@/components/LangSelect'
+  import Search from '@/components/HeaderSearch'
+  import {auth} from '@/api/all'
 
-export default {
-  components: {
-    Breadcrumb,
-    Hamburger,
-    Screenfull,
-    LangSelect,
-    Search
-  },
-  data() {
-    return {
-      dialogFormVisible: false,
-      loading: true,
-      temp: {
-        old_password: '',
-        new_password1 : '',
-        new_password2: ''
-      },
-      rules: {
-        old_password: [{ required: true, message: '请输入旧密码', trigger: 'blur' }],
-        new_password1: [{ min: 6, max: 20, required: true, message: '长度在 8 到 20 个字符', trigger: 'blur' }],
-        new_password2: [{ min: 6, max: 20, required: true, message: '长度在 8 到 20 个字符', trigger: 'blur' }]
-      }
-    }
-  },
-  computed: {
-    ...mapGetters([
-      'sidebar',
-      'name',
-      'avatar',
-      'device'
-    ])
-  },
-  methods: {
-    toggleSideBar() {
-      this.$store.dispatch('app/toggleSideBar')
+  export default {
+    components: {
+      Breadcrumb,
+      Hamburger,
+      Screenfull,
+      LangSelect,
+      Search
     },
-    async logout() {
-      await this.$store.dispatch('user/logout')
-      this.$router.push(`/login?redirect=${this.$route.fullPath}`)
-    },
-    resetTemp() {
-      this.temp = {
-        old_password: '',
-        new_password: '',
-        new_password_again: ''
-      }
-    },
-    handleEditPwd() {
-      this.resetTemp()
-      this.dialogFormVisible = true
-      this.loading = false
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    editPwd() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          if (this.temp.new_password !== this.temp.new_password_again) {
-            this.$message.error('两次输入的密码不一致')
-            return
-          }
-          this.loading = true
-          auth.changepwd(this.temp).then(response => {
-            this.dialogFormVisible = false
-            this.$notify({
-              title: '成功',
-              message: '修改成功',
-              type: 'success',
-              duration: 2000
-            })
-          }).catch(() => {
-            this.loading = false
-          })
+    data() {
+      return {
+        dialogFormVisible: false,
+        loading: true,
+        cur_date: '',
+        temp: {
+          old_password: '',
+          new_password1: '',
+          new_password2: ''
+        },
+        rules: {
+          old_password: [{required: true, message: '请输入旧密码', trigger: 'blur'}],
+          new_password1: [{min: 6, max: 20, required: true, message: '长度在 8 到 20 个字符', trigger: 'blur'}],
+          new_password2: [{min: 6, max: 20, required: true, message: '长度在 8 到 20 个字符', trigger: 'blur'}]
         }
-      })
+      }
+    },
+    computed: {
+      ...mapGetters([
+        'sidebar',
+        'name',
+        'avatar',
+        'ip',
+        'device'
+      ])
+    },
+    methods: {
+      toggleSideBar() {
+        this.$store.dispatch('app/toggleSideBar')
+      },
+      async logout() {
+        await this.$store.dispatch('user/logout')
+        this.$router.push(`/login?redirect=${this.$route.fullPath}`)
+      },
+      resetTemp() {
+        this.temp = {
+          old_password: '',
+          new_password: '',
+          new_password_again: ''
+        }
+      },
+      handleEditPwd() {
+        this.resetTemp()
+        this.dialogFormVisible = true
+        this.loading = false
+        this.$nextTick(() => {
+          this.$refs['dataForm'].clearValidate()
+        })
+      },
+      editPwd() {
+        this.$refs['dataForm'].validate((valid) => {
+          if (valid) {
+            if (this.temp.new_password !== this.temp.new_password_again) {
+              this.$message.error('两次输入的密码不一致')
+              return
+            }
+            this.loading = true
+            auth.changepwd(this.temp).then(response => {
+              this.dialogFormVisible = false
+              this.$notify({
+                title: '成功',
+                message: '修改成功',
+                type: 'success',
+                duration: 2000
+              })
+            }).catch(() => {
+              this.loading = false
+            })
+          }
+        })
+      }
+    },
+    mounted() {
+      const _this = this; //声明一个变量指向vue实例this,保证作用域一致
+      this.timer = setInterval(function () {
+        _this.cur_date = (new Date()).toLocaleString();//修改数据date
+      }, 1000)
     }
   }
-}
 </script>
 
 <style lang="scss" scoped>

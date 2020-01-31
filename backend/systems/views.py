@@ -83,7 +83,12 @@ class AuthViewSet(ModelViewSet):
                 topmenuid = data[0].id
 
         menus = set_menu(data, topmenuid)
-        data = {'menus': menus, 'username': user_obj.username, 'avatar': user_obj.avatar, 'introduction': user_obj.memo}
+
+        ip = request.META.get("HTTP_X_FORWARDED_FOR", "")
+        if not ip:
+            ip = request.META.get('REMOTE_ADDR', "")
+
+        data = {'menus': menus, 'username': user_obj.username, 'avatar': user_obj.avatar, 'memo': user_obj.memo, 'ip': ip}
         return JsonResponse(OrderedDict([
             ('results', data)
         ], code=status.HTTP_200_OK))
