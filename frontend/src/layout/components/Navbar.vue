@@ -13,8 +13,8 @@ c
     <div class="right-menu">
       <template v-if="device !== 'mobile'">
         <div class="right-menu-item">
-          <a style="color: #a45157">{{ip}}</a>
           <a style="color: #0a76a4">{{cur_date}}</a>
+          <a style="color: #a45157">{{ip}}</a>
         </div>
         <search id="header-search" class="right-menu-item"/>
 
