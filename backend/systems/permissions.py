@@ -14,6 +14,7 @@ parse_method_action = {
 }
 
 ignore_path = [
+    '/api/sys/auth/jwt-token-auth/',
     '/api/sys/auth/getuserinfo/',
     '/api/sys/auth/getmenubutons/',
 ]
