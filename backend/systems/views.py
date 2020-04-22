@@ -5,6 +5,7 @@ from systems.serializers import *
 from common.views import ModelViewSet, FKModelViewSet, JsonResponse, BulkModelMixin
 from rest_framework.decorators import action
 from systems.menus import get_menus_by_user, set_menu
+from systems.permissions import IsOwnerRoles
 from common import status
 from collections import OrderedDict
 from rest_framework_jwt.serializers import JSONWebTokenSerializer
@@ -19,11 +20,6 @@ class UserViewSet(FKModelViewSet):
     search_fields = ['username']
     filter_fields = ['username']
     ordering_fields = ['username', 'status']
-
-    # def get_serializer_class(self):
-    #     if self.action in ['list', 'retrieve'] or self.resultData:
-    #         return UserReadSerializer
-    #     return UserSerializer
 
 
 class RoleViewSet(ModelViewSet):
