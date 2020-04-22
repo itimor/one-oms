@@ -40,6 +40,7 @@ const actions = {
       auth.login({ username: username.trim(), password: password }).then(response => {
         const data = response.results
         commit('SET_TOKEN', data.token)
+        console.log(data)
         setToken(data.token)
         resolve()
       }).catch(error => {

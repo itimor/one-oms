@@ -1,4 +1,4 @@
-<template>
+  <template>
   <div class="app-container">
     <div class="filter-container">
       <el-input
@@ -46,11 +46,11 @@
       <el-table-column type="selection" width="55"/>
       <el-table-column label="用户名" prop="username"></el-table-column>
       <el-table-column label="真实姓名" prop="realname"></el-table-column>
-      <el-table-column label="角色" prop="roles">
+      <!-- <el-table-column label="角色" prop="roles">
         <template slot-scope="scope">
           <el-tag v-for="item in scope.row.roles" :key="item.id" size="medium">{{item.name}}</el-tag>
         </template>
-      </el-table-column>
+      </el-table-column> -->  
       <el-table-column label="头像" align="center">
         <template slot-scope="scope">
           <el-popover

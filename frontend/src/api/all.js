@@ -8,6 +8,7 @@ export const auth = auths
 export const user = new Request('/sys/user/')
 export const role = new Request('/sys/role/')
 export const menu = new Request('/sys/menu/')
+export const perm = new Request('/sys/perm/')
 
 // tools
 export const auditlog = new Request('/tool/auditlog/')

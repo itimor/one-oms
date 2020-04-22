@@ -49,8 +49,7 @@ class StandardResultsSetPagination(PageNumberPagination):
                     cutoff=self.max_page_size
                 )
             except (KeyError, ValueError):
-                pass
-
+                return None
         return self.page_size
 
 

@@ -20,10 +20,10 @@ class UserViewSet(FKModelViewSet):
     filter_fields = ['username']
     ordering_fields = ['username', 'status']
 
-    def get_serializer_class(self):
-        if self.action in ['list', 'retrieve'] or self.resultData:
-            return UserReadSerializer
-        return UserSerializer
+    # def get_serializer_class(self):
+    #     if self.action in ['list', 'retrieve'] or self.resultData:
+    #         return UserReadSerializer
+    #     return UserSerializer
 
 
 class RoleViewSet(ModelViewSet):
@@ -32,27 +32,6 @@ class RoleViewSet(ModelViewSet):
     search_fields = ['name']
     filter_fields = ['name']
     ordering_fields = ['parent_id', 'sequence']
-
-    def list(self, request, *args, **kwargs):
-        # 不记录list get请求
-        # self.watch_audit_log(request)
-
-        queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-
-        data = []
-        for i in serializer.data:
-            if i.parent is None:
-                i.parent = 0
-            data.append(i)
-        return JsonResponse(OrderedDict([
-            ('results', data)
-        ], code=status.HTTP_200_OK))
 
 
 class PermissionViewSet(ModelViewSet):
@@ -69,27 +48,6 @@ class MenuViewSet(ModelViewSet):
     search_fields = ['name']
     filter_fields = ['name']
     ordering_fields = ['parent_id', 'sequence']
-
-    def list(self, request, *args, **kwargs):
-        # 不记录list get请求
-        # self.watch_audit_log(request)
-
-        queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-
-        data = []
-        for i in serializer.data:
-            if i.parent is None:
-                i.parent = 0
-            data.append(i)
-        return JsonResponse(OrderedDict([
-            ('results', data)
-        ], code=status.HTTP_200_OK))
 
 
 class AuthViewSet(ModelViewSet):
