@@ -176,4 +176,5 @@ export const componentsMap = {
   // tool
   auditlog: () => import('@/views/tool/auditlog'), // 审计日志
   test: () => import('@/views/tool/simple'), // test
+
 }

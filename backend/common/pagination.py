@@ -3,10 +3,10 @@
 
 from collections import OrderedDict
 
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 
-from Common import status
-from Common.views import JsonResponse
+from common import status
+from common.dispath import JsonResponse
 
 
 def _positive_int(integer_string, strict=False, cutoff=None):
@@ -22,11 +22,12 @@ def _positive_int(integer_string, strict=False, cutoff=None):
         return min(ret, cutoff)
     return ret
 
+
 class StandardResultsSetPagination(PageNumberPagination):
     """
     配置分页规则
     """
-    page_size = 100
+    page_size = 20
     page_size_query_param = 'limit'
     page_query_param = 'page'
     max_page_size = 1000
@@ -51,3 +52,11 @@ class StandardResultsSetPagination(PageNumberPagination):
                 pass
 
         return self.page_size
+
+
+class CustomLimitOffsetPagination(LimitOffsetPagination):
+    def get_offset(self, request):
+        try:
+            return (int(request.query_params['offset']) - 1) * int(request.query_params['limit'])
+        except (KeyError, ValueError):
+            return 1

@@ -8,7 +8,7 @@
       <div class="rightPanel-items">
         <slot />
         <div class="rightPanel-button">
-          <img src="http://img.adoutu.com/picture/1538925835348.jpg" alt="" width="100%">
+          <img/>
         </div>
       </div>
     </div>
@@ -107,7 +107,7 @@ export default {
   transition: all .25s cubic-bezier(.7, .3, .1, 1);
   transform: translate(100%);
   z-index: 30000;
-  background-image: url('https://www.5dmu.com/zb_users/upload/2019/06/201906051559743778734609.jpg');
+  background-image: url('http://img1.bcoderss.com/wp-content/uploads/vip/江南烧酒4k手机壁纸2160x3840.jpg');
   background-size:cover;
   background-position: center;
   .rightPanel-button{

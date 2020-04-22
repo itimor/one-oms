@@ -1,4 +1,3 @@
-c
 <template>
   <div class="navbar">
     <hamburger
@@ -13,9 +12,10 @@ c
     <div class="right-menu">
       <template v-if="device !== 'mobile'">
         <div class="right-menu-item">
-          <a style="color: #0a76a4">{{cur_date}}</a>
-          <a style="color: #a45157">{{ip}}</a>
+          <a class="ip">{{ip}}</a>
+          <a class="date">{{cur_date}}</a>
         </div>
+
         <search id="header-search" class="right-menu-item"/>
 
         <screenfull id="screenfull" class="right-menu-item hover-effect"/>
@@ -36,9 +36,9 @@ c
               {{ "首页" }}
             </el-dropdown-item>
           </router-link>
-          <el-dropdown-item>
+          <el-dropdown-item disabled>
             <span style="display:block;" @click="handleEditPwd">{{
-              "修改密码"
+              "个人中心"
             }}</span>
           </el-dropdown-item>
           <el-dropdown-item divided>
@@ -47,7 +47,7 @@ c
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-    <el-dialog title="修改密码" :visible.sync="dialogFormVisible">
+    <el-dialog title="修改密码" :visible.sync="dialogFormVisible" width="30%">
       <el-form
         ref="dataForm"
         v-loading="loading"
@@ -117,6 +117,7 @@ c
     },
     data() {
       return {
+        dialogVisible: false,
         dialogFormVisible: false,
         loading: true,
         cur_date: '',
@@ -188,10 +189,10 @@ c
       }
     },
     mounted() {
-      const _this = this; //声明一个变量指向vue实例this,保证作用域一致
+      var _this = this; //声明一个变量指向vue实例this,保证作用域一致
       this.timer = setInterval(function () {
         _this.cur_date = (new Date()).toLocaleString();//修改数据date
-      }, 1000)
+      }, 1000);
     }
   }
 </script>
@@ -242,6 +243,14 @@ c
         font-size: 18px;
         color: #5a5e66;
         vertical-align: text-bottom;
+
+        .ip {
+          color: #39b3d1;
+        }
+
+        .date {
+          color: #d39011;
+        }
 
         &.hover-effect {
           cursor: pointer;

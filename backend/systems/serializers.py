@@ -3,7 +3,6 @@
 
 from systems.models import *
 from rest_framework import serializers
-from systems.menus import init_menu
 
 
 class UserReadSerializer(serializers.ModelSerializer):
@@ -22,7 +21,11 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         roles = validated_data.pop('roles')
         obj = User.objects.create(**validated_data)
-        obj.roles.set(roles)
+        if len(roles) > 0:
+            obj.roles.set(roles)
+        else:
+            role = Role.objects.get(id=1)
+            obj.roles.add(role)
         try:
             obj.set_password(validated_data['password'])
         except:
@@ -34,8 +37,9 @@ class UserSerializer(serializers.ModelSerializer):
         roles = validated_data.pop('roles')
         instance.username = validated_data.get('username', instance.username)
         instance.realname = validated_data.get('realname', instance.realname)
+        instance.email = validated_data.get('email', instance.email)
         instance.avatar = validated_data.get('avatar', instance.avatar)
-        instance.is_active = validated_data.get('is_active', instance.is_active)
+        instance.status = validated_data.get('status', instance.status)
         instance.memo = validated_data.get('memo', instance.memo)
         try:
             instance.set_password(validated_data['password'])
@@ -46,44 +50,24 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 
-class RoleReadSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Role
-        fields = '__all__'
-
-
 class RoleSerializer(serializers.ModelSerializer):
+    user_set = UserSerializer(many=True, read_only=True)
+
     class Meta:
         model = Role
         fields = '__all__'
 
 
-class MenuReadSerializer(serializers.ModelSerializer):
+class PermissionSerializer(serializers.ModelSerializer):
+    permissionrole = RoleSerializer(many=True, read_only=True)
+    user_set = UserSerializer(many=True, read_only=True)
+
     class Meta:
-        model = Menu
+        model = Permission
         fields = '__all__'
 
 
 class MenuSerializer(serializers.ModelSerializer):
     class Meta:
         model = Menu
-        fields = '__all__'
-
-    def create(self, validated_data):
-        obj = Menu.objects.create(**validated_data)
-        if obj.type == 2:
-            init_menu(obj)
-        return obj
-
-
-class ApiPermReadSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ApiPerm
-        fields = '__all__'
-        depth = 1
-
-
-class ApiPermSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ApiPerm
         fields = '__all__'

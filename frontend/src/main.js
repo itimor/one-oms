@@ -17,6 +17,10 @@ import i18n from './lang' // Internationalization
 import './icons' // icon
 import './permission' // permission control
 
+// cron表达式
+import VueCron from 'point-vue-cron'
+Vue.use(VueCron)
+
 import * as filters from './filters' // global filters
 
 Vue.use(Element, {

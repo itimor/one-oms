@@ -8,9 +8,9 @@ const getters = {
   token: state => state.user.token,
   avatar: state => state.user.avatar,
   username: state => state.user.username,
-  memo: state => state.user.memo,
-  ip: state => state.user.ip,
+  introduction: state => state.user.introduction,
   roles: state => state.user.roles,
+  ip: state => state.user.ip,
   permission_routes: state => state.permission.routes,
   addRoutes: state => state.permission.addRoutes
 }

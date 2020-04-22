@@ -215,13 +215,6 @@
       text-align: center;
       margin: 20px 0;
     }
-
-    .el-button--primary {
-      color: #8b8bff !important;
-      background-color: #ffc48c !important;
-      border-color: #ffab32 !important;
-      letter-spacing: 28px;
-    }
   }
 </style>
 
@@ -233,8 +226,7 @@
   .login-container {
     min-height: 100%;
     width: 100%;
-    // background-color: $bg;
-    background: url('../../assets/login-bg.jpg') center 0 no-repeat;
+    background-color: $bg;
     overflow: hidden;
 
     .login-form {
@@ -260,8 +252,6 @@
       .title {
         font-size: 26px;
         color: $light_gray;
-        letter-spacing: 8px;
-        text-shadow: .2rem 0rem .5rem $dark_gray, -.2rem 0rem .5rem $dark_gray, 0rem .2rem .5rem $dark_gray, 0rem -.2rem .5rem $dark_gray;
         margin: 0px auto 40px auto;
         text-align: center;
         font-weight: bold;

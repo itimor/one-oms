@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # author: itimor
 
-from django.utils import six
+import six
 from rest_framework.serializers import Serializer
 from rest_framework.response import Response
 

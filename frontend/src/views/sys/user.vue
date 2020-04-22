@@ -62,9 +62,10 @@
           </el-popover>
         </template>
       </el-table-column>
-      <el-table-column label="状态" prop="is_active" sortable="custom">
+      <el-table-column label="状态" prop="status" sortable="custom">
         <template slot-scope="scope">
-          <span>{{scope.row.is_active}}</span>
+          <el-tag v-if="scope.row.status" type="success">启用</el-tag>
+          <el-tag v-else type="danger">禁用</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
@@ -94,12 +95,12 @@
       <pagination
         v-show="total > 0"
         :total="total"
-        :page.sync="listQuery.offset"
+        :page.sync="listQuery.page"
         :limit.sync="listQuery.limit"
         @pagination="getList"
       />
     </div>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
       <el-form
         ref="dataForm"
         :rules="rules"
@@ -138,7 +139,7 @@
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-switch
-            v-model="temp.is_active"
+            v-model="temp.status"
             active-color="#13ce66"
             inactive-color="#ff4949">
           </el-switch>
@@ -191,7 +192,7 @@
         listLoading: true,
         loading: true,
         listQuery: {
-          offset: 1,
+          page: 1,
           limit: 20,
           search: undefined,
           ordering: undefined
@@ -262,7 +263,7 @@
           realname: '',
           avatar: 'http://m.imeitou.com/uploads/allimg/2017110610/b3c433vwhsk.jpg',
           roles: [],
-          is_active: true,
+          status: true,
           memo: ''
         }
       },

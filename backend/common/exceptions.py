@@ -34,7 +34,22 @@ class ExceptionX:
         result.exceptionTitle = tempStrArray[1]
         result.exceptionType = tempStrArray[0][1:]
         result.exceptionDetail = str(e)
+
         if result.exceptionDetail[0] == "<":
             if result.exceptionDetail[result.exceptionDetail.__len__() - 1] == ">":
                 result.exceptionDetail = result.exceptionDetail[1:result.exceptionDetail.__len__() - 1]
         return result
+
+    @staticmethod
+    def PasreRaise(e):
+        result = ExceptionX_Result
+        tempStr = str(type(e))
+        tempStrArray = tempStr.split("'")
+        result.exceptionTitle = tempStrArray[1]
+        result.exceptionType = tempStrArray[0][1:]
+        result.exceptionDetail = str(e)
+
+        if result.exceptionDetail[0] == "<":
+            if result.exceptionDetail[result.exceptionDetail.__len__() - 1] == ">":
+                result.exceptionDetail = result.exceptionDetail[1:result.exceptionDetail.__len__() - 1]
+        return result.exceptionDetail

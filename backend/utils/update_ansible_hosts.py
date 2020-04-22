@@ -5,6 +5,7 @@ import time
 import requests
 import sys
 
+http://10.4.12.2:8080/configfiles/json/jenkins-front/default/application
 reload(sys)
 sys.setdefaultencoding('utf8')
 

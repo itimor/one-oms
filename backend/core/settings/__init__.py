@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-# author: timor
+# author: itimor
 
-from .base import *
 import platform
+from .base import *
 
-os = platform.system()
+os_type = platform.system()
 
-if os == 'Windows':
-    print("dev env..")
+if os_type == 'Windows':
+    print('进入 dev ')
     from .dev import *
 else:
-    print("prod env..")
+    print('进入 prod ')
     from .prod import *

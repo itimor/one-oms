@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # author: itimor
 
-
 import re
+import IPy
 
 
 def is_valid_domain(value):
@@ -23,21 +23,15 @@ def is_domain(domain):
 
 
 def is_ip(address):
-    ipv4_regex = re.compile(
-        '^(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[1-9])\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)$',
-        re.IGNORECASE)
-    return True if ipv4_regex.match(address) else False
+    print(address)
+    try:
+        IPy.IP(address)
+        return True
+    except Exception as e:
+        print(e)
+        return False
 
-
-# import IPy
-#
-# def is_ip(address):
-#     try:
-#         IPy.IP(address)
-#         return True
-#     except Exception as  e:
-#         return False
 
 if __name__ == '__main__':
     print(is_valid_domain('https://aa.www.baidu.com'))
-    print(is_ipv4('22.2.2.256'))
+    print(is_ip('22.2.2.256'))

@@ -1,17 +1,28 @@
 # -*- coding: utf-8 -*-
-# author: timor
+# author: itimor
 
-# db
+import os
+
+APP_ENV = 'prod'
+
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = '64318ob@vbou7h50)b0a_pfda4d$bw2nhl4h*m$qo0_e_fxw=658!z*x'
+
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = False
+
+ALLOWED_HOSTS = ['*']
+
+# mysql
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-        'NAME': 'mysql',
+        'NAME': 'one',
         'USER': 'root',
-        'PASSWORD': 'momo520',
+        'PASSWORD': 'TY%pwd123',
+        'HOST': 'localhost',
         'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-            },
+            "init_command": "SET foreign_key_checks=0;",
+        }
     }
 }

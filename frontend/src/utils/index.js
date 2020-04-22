@@ -314,19 +314,12 @@ export function removeClass(ele, cls) {
   }
 }
 
-export function getConversionTime(type) {
-  let ctime
-  const date = new Date()
+export function FormatTime(date) {
   const Y = date.getFullYear().toString()
   const M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1)
   const D = date.getDate() + 1 < 10 ? '0' + date.getDate() : date.getDate()
   const h = date.getHours() + 1 < 10 ? '0' + date.getHours() : date.getHours()
   const m = date.getMinutes() + 1 < 10 ? '0' + date.getMinutes() : date.getMinutes()
   const s = date.getSeconds() + 1 < 10 ? '0' + date.getSeconds() : date.getSeconds()
-  if (type === 'pid') {
-    ctime = Y + M + D + h + m + s
-  } else {
-    ctime = Y + '-' + M + '-' + D + '-' + h + '-' + m + '-' + s
-  }
-  return ctime
+  return Y + '-' + M + '-' + D + ' ' + h + ':' + m + ':' + s
 }

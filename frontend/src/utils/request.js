@@ -7,7 +7,7 @@ import { getToken } from '@/utils/auth'
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // api 的 base_url
   withCredentials: true, // 跨域请求时发送 cookies
-  timeout: 5000 // request timeout
+  timeout: 500000 // request timeout
 })
 
 // request interceptor
@@ -43,9 +43,8 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-
-    // response.status 为 2xx
-    if (/^2([0-9]{2,})$/.test(response.status)) {
+    // response.status 为 200
+    if (res.code === 20000) {
       return res
     } else {
       Message({
@@ -53,20 +52,6 @@ service.interceptors.response.use(
         type: 'error',
         duration: 5 * 1000
       })
-      // 50008:非法的token; 50012:其他客户端登录了;  50014:Token 过期了;
-      // if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
-      //   // 请自行在引入 MessageBox
-      //   // import { Message, MessageBox } from 'element-ui'
-      //   MessageBox.confirm('你已被登出，可以取消继续留在该页面，或者重新登录', '确定登出', {
-      //     confirmButtonText: '重新登录',
-      //     cancelButtonText: '取消',
-      //     type: 'warning'
-      //   }).then(() => {
-      //     store.dispatch('user/resetToken').then(() => {
-      //       location.reload() // 为了重新实例化vue-router对象 避免bug
-      //     })
-      //   })
-      // }
       return Promise.reject(res.message || 'error')
     }
   },

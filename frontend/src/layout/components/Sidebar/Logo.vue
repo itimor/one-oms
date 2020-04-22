@@ -24,8 +24,8 @@ export default {
   },
   data() {
     return {
-      title: '后台管理',
-      logo: '/favicon.ico'
+      title: 'KK域名拨测',
+      logo: 'http://softqual.co.il/wp-content/uploads/2017/06/cropped-favicon.png'
     }
   }
 }

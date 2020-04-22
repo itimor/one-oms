@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
 # author: timor
 
-from rest_framework import viewsets, permissions
 from systems.serializers import *
 from common.views import ModelViewSet, FKModelViewSet, JsonResponse, BulkModelMixin
 from rest_framework.decorators import action
 from systems.menus import get_menus_by_user, set_menu
 from common import status
 from collections import OrderedDict
+from rest_framework_jwt.serializers import JSONWebTokenSerializer
+from rest_framework_jwt.views import JSONWebTokenAPIView, jwt_response_payload_handler
+from rest_framework_jwt.settings import api_settings
+from datetime import datetime
 
 
-class UserViewSet(BulkModelMixin):
+class UserViewSet(FKModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     search_fields = ['username']
     filter_fields = ['username']
-    ordering_fields = ['username', 'is_active']
-    permission_classes = [permissions.IsAuthenticated]
+    ordering_fields = ['username', 'status']
 
     def get_serializer_class(self):
         if self.action in ['list', 'retrieve'] or self.resultData:
@@ -24,46 +26,70 @@ class UserViewSet(BulkModelMixin):
         return UserSerializer
 
 
-class RoleViewSet(BulkModelMixin):
+class RoleViewSet(ModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
     search_fields = ['name']
     filter_fields = ['name']
     ordering_fields = ['parent_id', 'sequence']
-    permission_classes = [permissions.IsAuthenticated]
 
-    def get_serializer_class(self):
-        if self.action in ['list', 'retrieve'] or self.resultData:
-            return RoleReadSerializer
-        return RoleSerializer
+    def list(self, request, *args, **kwargs):
+        # 不记录list get请求
+        # self.watch_audit_log(request)
+
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+
+        data = []
+        for i in serializer.data:
+            if i.parent is None:
+                i.parent = 0
+            data.append(i)
+        return JsonResponse(OrderedDict([
+            ('results', data)
+        ], code=status.HTTP_200_OK))
 
 
-class MenuViewSet(BulkModelMixin):
+class PermissionViewSet(ModelViewSet):
+    queryset = Permission.objects.all()
+    serializer_class = PermissionSerializer
+    search_fields = ['name']
+    filter_fields = ['name']
+    ordering_fields = ['name']
+
+
+class MenuViewSet(ModelViewSet):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
     search_fields = ['name']
     filter_fields = ['name']
     ordering_fields = ['parent_id', 'sequence']
-    permission_classes = [permissions.IsAuthenticated]
 
-    def get_serializer_class(self):
-        if self.action in ['list', 'retrieve'] or self.resultData:
-            return MenuReadSerializer
-        return MenuSerializer
+    def list(self, request, *args, **kwargs):
+        # 不记录list get请求
+        # self.watch_audit_log(request)
 
+        queryset = self.filter_queryset(self.get_queryset())
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
 
-class ApiPermViewSet(BulkModelMixin):
-    queryset = ApiPerm.objects.all()
-    serializer_class = ApiPermSerializer
-    search_fields = ['name']
-    filter_fields = ['name']
-    ordering_fields = ['parent_id']
-    permission_classes = [permissions.IsAuthenticated]
+        serializer = self.get_serializer(queryset, many=True)
 
-    def get_serializer_class(self):
-        if self.action in ['list', 'retrieve'] or self.resultData:
-            return ApiPermReadSerializer
-        return ApiPermSerializer
+        data = []
+        for i in serializer.data:
+            if i.parent is None:
+                i.parent = 0
+            data.append(i)
+        return JsonResponse(OrderedDict([
+            ('results', data)
+        ], code=status.HTTP_200_OK))
 
 
 class AuthViewSet(ModelViewSet):
@@ -88,7 +114,8 @@ class AuthViewSet(ModelViewSet):
         if not ip:
             ip = request.META.get('REMOTE_ADDR', "")
 
-        data = {'menus': menus, 'username': user_obj.username, 'avatar': user_obj.avatar, 'memo': user_obj.memo, 'ip': ip}
+        data = {'menus': menus, 'username': user_obj.username, 'avatar': user_obj.avatar, 'memo': user_obj.memo,
+                'ip': ip}
         return JsonResponse(OrderedDict([
             ('results', data)
         ], code=status.HTTP_200_OK))
@@ -114,3 +141,30 @@ class AuthViewSet(ModelViewSet):
         return JsonResponse(OrderedDict([
             ('results', data)
         ], code=status.HTTP_200_OK))
+
+
+class ObtainJSONWebToken(JSONWebTokenAPIView):
+    serializer_class = JSONWebTokenSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            user = serializer.object.get('user') or request.user
+            token = serializer.object.get('token')
+            response_data = jwt_response_payload_handler(token, user, request)
+            response = JsonResponse(OrderedDict([
+                ('results', response_data)
+            ], code=status.HTTP_200_OK))
+            if api_settings.JWT_AUTH_COOKIE:
+                expiration = (datetime.utcnow() +
+                              api_settings.JWT_EXPIRATION_DELTA)
+                response.set_cookie(api_settings.JWT_AUTH_COOKIE,
+                                    token,
+                                    expires=expiration,
+                                    httponly=True)
+            return response
+
+        return JsonResponse(OrderedDict([
+            ('results', serializer.errors)
+        ], code=status.HTTP_500_INTERNAL_SERVER_ERROR))

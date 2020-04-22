@@ -10,19 +10,6 @@ def get_menus_by_user(user):
 
     if user_obj.first().is_admin:
         menus = Menu.objects.all()
-        if len(menus) == 0:
-            print("############初始化菜单###########")
-            topmenu = Menu.objects.create(name='top', code='top', curl='/top', icon='top', sequence=0, type=1, parent_id=None)
-            sysmenu = Menu.objects.create(name='系统管理', code='sys', curl='/sys', icon='sys', sequence=1, type=1, parent_id=topmenu.id)
-            menumodel = Menu.objects.create(name='用户管理', code='user', curl='/user', icon='user', sequence=10, type=2, parent_id=sysmenu.id)
-            init_menu(menumodel)
-            menumodel = Menu.objects.create(name='角色管理', code='role', curl='/role', icon='role', sequence=20, type=2, parent_id=sysmenu.id)
-            init_menu(menumodel)
-            menumodel = Menu.objects.create(name='菜单管理', code='menu', curl='/menu', icon='menu', sequence=30, type=2, parent_id=sysmenu.id)
-            init_menu(menumodel)
-            menumodel = Menu.objects.create(name='图标管理', code='icon', curl='/icon', icon='icon', sequence=40, type=2, parent_id=sysmenu.id)
-            init_menu(menumodel)
-            menus = Menu.objects.all()
     else:
         user_role_list = user_obj.values('roles')
         user_menu_list = Role.objects.filter(id__in=user_role_list).values('menus')
@@ -96,14 +83,19 @@ def set_menu(menus, parent_id):
 def init_menu(menu):
     if menu.type == 2:
         menu_list = [
-            {"name": "新增", "code": menu.code + "add", "curl": menu.curl + "/add", 'type': 3, "operate": "add", "sequence": 10},
-            {"name": "删除", "code": menu.code + "del", "curl": menu.curl + "/del", 'type': 3, "operate": "del", "sequence": 20},
-            {"name": "编辑", "code": menu.code + "update", "curl": menu.curl + "/update", 'type': 3, "operate": "update", "sequence": 30},
-            {"name": "查看", "code": menu.code + "view", "curl": menu.curl + "/view", 'type': 3, "operate": "view", "sequence": 40},
+            {"name": "新增", "code": menu.code + "add", "curl": menu.curl + "/add", 'type': 3, "operate": "add",
+             "sequence": 10},
+            {"name": "删除", "code": menu.code + "del", "curl": menu.curl + "/del", 'type': 3, "operate": "del",
+             "sequence": 20},
+            {"name": "编辑", "code": menu.code + "update", "curl": menu.curl + "/update", 'type': 3, "operate": "update",
+             "sequence": 30},
+            {"name": "查看", "code": menu.code + "view", "curl": menu.curl + "/view", 'type': 3, "operate": "view",
+             "sequence": 40},
         ]
 
         menu_models = []
         for item in menu_list:
-            menu_models.append(Menu(name=item['name'], code=item['code'], curl=item['curl'], type=item['type'], operate=item['operate'],
+            menu_models.append(Menu(name=item['name'], code=item['code'], curl=item['curl'], type=item['type'],
+                                    operate=item['operate'],
                                     sequence=item['sequence'], parent_id=menu.id, hidden=True))
         Menu.objects.bulk_create(menu_models)

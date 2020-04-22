@@ -7,7 +7,7 @@ function resolve(dir) {
 }
 
 //const name = pkg.name || 'vue-element-admin' // page title
-const name = '后台管理系统' // page title
+const name = 'KK域名拨测系统' // page title
 
 // All configuration item explanations can be find in https://cli.vuejs.org/config/
 module.exports = {
@@ -19,7 +19,7 @@ module.exports = {
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
   publicPath: '/',
-  outputDir: '../backend/templates',
+  outputDir: './dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,

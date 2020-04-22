@@ -4,7 +4,8 @@
 .python-version
 upload/
 *.log
-migrations/
 node_modules/
 package-lock.json
 .vscode/
+venv/
+*.db

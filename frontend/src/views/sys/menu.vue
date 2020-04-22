@@ -89,12 +89,12 @@
       <pagination
         v-show="total > 0"
         :total="total"
-        :page.sync="listQuery.offset"
+        :page.sync="listQuery.page"
         :limit.sync="listQuery.limit"
         @pagination="getList"
       />
     </div>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
       <el-form
         ref="dataForm"
         :rules="rules"
@@ -216,7 +216,7 @@
         listLoading: true,
         loading: true,
         listQuery: {
-          offset: 1,
+          page: 1,
           limit: 20,
           search: undefined,
           ordering: undefined
@@ -259,7 +259,7 @@
         return cloneData.filter(father => {
           const branchArr = cloneData.filter(child => father.id === child.parent)
           branchArr.length > 0 ? father.children = branchArr : ''
-          return father.parent === this.list[0].parent
+          return father.parent === this.allmean[0].parent
         })
       }
     },

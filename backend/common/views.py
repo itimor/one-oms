@@ -27,8 +27,6 @@ class ModelViewSet(viewsets.ModelViewSet):
         if not ip:
             ip = request.META.get('REMOTE_ADDR', "")
         method = request._request.method
-        # 不记录get请求
-        # if method != 'GET':
         RequestEvent.objects.create(
             url=request.path,
             method=method,
@@ -45,22 +43,30 @@ class ModelViewSet(viewsets.ModelViewSet):
         self.watch_audit_log(request)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return JsonResponse(OrderedDict([
-            ('results', serializer.data)
-        ], code=status.HTTP_200_OK), headers=headers)
+        try:
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return JsonResponse(OrderedDict([
+                ('results', serializer.data)
+            ], code=status.HTTP_200_OK), headers=headers)
+        except Exception as e:
+            return JsonResponse(OrderedDict([
+                ('results', {"msg": ExceptionX.PasreRaise(e)})
+            ], code=status.HTTP_500_INTERNAL_SERVER_ERROR))
 
     def perform_create(self, serializer):
         serializer.save()
 
     def list(self, request, *args, **kwargs):
+        # 不记录list get请求
         # self.watch_audit_log(request)
+
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)
+
         serializer = self.get_serializer(queryset, many=True)
         return JsonResponse(OrderedDict([
             ('results', serializer.data)
@@ -164,25 +170,6 @@ class FKModelViewSet(ModelViewSet):
 
 # 批量操作modelview  bulk_create|bulk_delete|bulk_update
 class BulkModelMixin(ModelViewSet):
-    def watch_audit_log(self, request):
-        ip = request.META.get("HTTP_X_FORWARDED_FOR", "")
-        if not ip:
-            ip = request.META.get('REMOTE_ADDR', "")
-        method = request._request.method
-        # 不记录get请求
-        # if method != 'GET':
-        RequestEvent.objects.create(
-            url=request.path,
-            method=method,
-            query_string=json.dumps({
-                'query_params': request.query_params,
-                'json': request.data
-            }),
-            user=self.request.user,
-            remote_ip=ip,
-            create_time=timezone.now()
-        )
-
     # 批量添加
     @action(methods=['post'], url_path='bulk_create', detail=False)
     def bulk_create(self, request, *args, **kwargs):
@@ -198,8 +185,8 @@ class BulkModelMixin(ModelViewSet):
 
         bulk_models = []
         for obj in objs:
-            print(obj)
             req = {'id': '0102', 'msg': 'success'}
+            print(obj)
             try:
                 serializer = self.get_serializer(data=obj)
                 serializer.is_valid(raise_exception=True)

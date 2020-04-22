@@ -79,7 +79,7 @@
         @pagination="getList"
       />
     </div>
-    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
       <el-form
         ref="dataForm"
         :rules="rules"
@@ -201,11 +201,12 @@
     computed: {
       optionDataSelectTree2() {
         const cloneData = this.allrole
-        return cloneData.filter(father => {
+        const ha = cloneData.filter(father => {
           const branchArr = cloneData.filter(child => father.id === child.parent)
           branchArr.length > 0 ? father.children = branchArr : ''
-          return father.parent === this.list[0].parent
+          return father.parent === this.allrole[0].parent
         })
+        return ha
       }
     },
     created() {
