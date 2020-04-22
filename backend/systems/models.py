@@ -62,6 +62,13 @@ class Role(BaseModel):
 
 
 class PermissionsMixin(models.Model):
+    # groups = models.ManyToManyField(
+    #     Group,
+    #     verbose_name='groups',
+    #     blank=True,
+    #     related_name="user_set",
+    #     related_query_name="user",
+    # )
     roles = models.ManyToManyField(
         Role,
         verbose_name='roles',
