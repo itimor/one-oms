@@ -168,6 +168,10 @@ class User(BaseModel, PermissionsMixin, AbstractBaseUser):
 
     USERNAME_FIELD = 'username'  # 必须有一个唯一标识--USERNAME_FIELD
 
+    @property
+    def is_staff(self):
+        return self.is_admin
+
     def __str__(self):
         return self.username
 

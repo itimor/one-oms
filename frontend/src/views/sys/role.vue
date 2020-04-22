@@ -83,7 +83,7 @@
       :fullscreen="true"
     >
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="80px">
-        <el-row type="flex" class="row-bg" justify="space-around">
+        <el-row type="flex" class="row-bg" justify="space-between">
           <el-col :span="4">
             <el-form-item label="父级" prop="parent">
               <SelectTree
@@ -125,13 +125,13 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="14">
+          <el-col :span="12">
             <el-form-item label="模块权限" prop="model_perms">
               <el-transfer
                 v-model="temp.model_perms"
                 filterable
                 :titles="['未选择', '已选择']"
-                :data="allperm"
+                  :data="allperm"
                 :props="permprops"
               ></el-transfer>
             </el-form-item>
@@ -436,3 +436,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.el-transfer-panel{
+  width: 230px!important
+}
+</style>

@@ -13,17 +13,17 @@ def get_menus_by_user(user):
     else:
         user_role_list = user_obj.values('roles')
         user_menu_list = Role.objects.filter(id__in=user_role_list).values('menus')
+        menu_list = [item['menus'] for item in user_menu_list if item['menus']]
+        menu_list_objs = Menu.objects.filter(id__in=menu_list)
 
         menuMap = dict()
-        for item in user_menu_list:
-            menu_info = Menu.objects.get(id=item['menus'])
-            menuMap[menu_info.id] = menu_info
+        for item in menu_list_objs:
+            menuMap[item.id] = item
 
-        for item in user_menu_list:
-            menu_info = Menu.objects.get(id=item['menus'])
-            if menu_info.parent_id in menuMap:
+        for item in menu_list_objs:
+            if item.parent_id in menuMap:
                 continue
-            user_menus = find_menu_daddy(menu_info.parent_id, menuMap)
+            user_menus = find_menu_daddy(item.parent_id, menuMap)
         menus = [user_menus[i] for i in sorted(user_menus.keys())]
     return menus
 
@@ -36,7 +36,6 @@ def find_menu_daddy(menuid, menuMap):
             menuMap[mid] = obj
             find_menu_daddy(obj.parent_id, menuMap)
             return menuMap
-
 
 def set_menu(menus, parent_id):
     amenus = [i for i in menus if i.parent_id == parent_id]
