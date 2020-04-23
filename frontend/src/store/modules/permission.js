@@ -175,7 +175,7 @@ export const componentsMap = {
   icon: () => import('@/views/svg-icons/index'), // 图标管理
 
   // tool
-  auditlog: () => import('@/views/tool/auditlog'), // 审计日志
-  test: () => import('@/views/tool/simple'), // test
+  audit: () => import('@/views/tool/audit'), // 审计日志
+  test: () => import('@/views/tool/test'), // test
 
 }
