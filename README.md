@@ -6,7 +6,7 @@
 ### 后端
 ```bash
 cd backend
-pip install -r requirements.txt
+pip install -r dev_requirements.txt
 python manage.py migrate
 python manage.py initdb
 python manage.py runserver
