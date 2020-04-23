@@ -122,7 +122,7 @@
         <el-form-item label="真实姓名" prop="realname">
           <el-input v-model="temp.realname" />
         </el-form-item>
-        <el-form-item label="真实姓名" prop="realname">
+        <el-form-item label="用户组" prop="realname">
           <el-select v-model="temp.group" clearable placeholder="请选择用户组">
             <el-option v-for="item in groups" :key="item.id" :label="item.name" :value="item.id"></el-option>
           </el-select>
@@ -136,7 +136,7 @@
         <el-form-item label="状态" prop="status">
           <el-switch v-model="temp.status" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </el-form-item>
-        <el-form-item label="用户角色" prop="roles">
+        <el-form-item label="角色" prop="roles">
           <el-tree
             ref="tree"
             :check-strictly="false"

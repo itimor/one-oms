@@ -1,4 +1,4 @@
-  <template>
+<template>
   <div class="app-container">
     <div class="filter-container">
       <el-input
@@ -50,7 +50,7 @@
       <el-table-column label="备注" prop="memo"></el-table-column>
       <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
         <template slot-scope="{ row }">
-          <el-button-group v-show="!row.is_admin">
+          <el-button-group v-show="row.id !== 1">
             <el-button
               v-if="permissionList.update"
               size="small"
@@ -71,7 +71,7 @@
       <pagination
         v-show="total > 0"
         :total="total"
-        :page.sync="listQuery.page"
+        :page.sync="listQuery.offset"
         :limit.sync="listQuery.limit"
         @pagination="getList"
       />
@@ -89,8 +89,20 @@
         label-width="80px"
         style="width: 400px; margin-left:50px;"
       >
+        <el-form-item label="父级" prop="parent">
+          <SelectTree
+            v-model.number="temp.parent"
+            type="number"
+            :props="propsSelectTree"
+            :options="optionDataSelectTree2"
+            :value="valueIdSelectTree2"
+            :clearable="true"
+            :accordion="true"
+            @getValue="getSelectTreeValue($event, 2)"
+          />
+        </el-form-item>
         <el-form-item label="名称" prop="name">
-          <el-input v-model="temp.name" :disabled="dialogStatus === 'create' ? false : true" />
+          <el-input v-model="temp.name" />
         </el-form-item>
         <el-form-item label="代码" prop="code">
           <el-input v-model="temp.code" />
@@ -101,7 +113,7 @@
         <el-form-item label="备注" prop="memo">
           <el-input v-model="temp.memo" />
         </el-form-item>
-        <el-form-item label="用户角色" prop="roles">
+        <el-form-item label="角色" prop="roles">
           <el-tree
             ref="tree"
             :check-strictly="false"
@@ -127,8 +139,9 @@
 </template>
 
 <script>
-import { group, role, auth } from "@/api/all";
+import { group, menu, role, auth } from "@/api/all";
 import Pagination from "@/components/Pagination";
+import SelectTree from "@/components/TreeSelect";
 import {
   checkAuthAdd,
   checkAuthDel,
@@ -138,9 +151,19 @@ import {
 
 export default {
   name: "group",
-  components: { Pagination },
+  components: { Pagination, SelectTree },
   data() {
     return {
+      valueIdSelectTree: 0,
+      valueIdSelectTree2: 0,
+      propsSelectTree: {
+        value: "id",
+        label: "name",
+        children: "children",
+        placeholder: "父级"
+      },
+      propsSelectlist: [],
+      propsSelectlist2: [{ id: 0, parent: -1, name: "顶级" }],
       operationList: [],
       permissionList: {
         add: false,
@@ -168,19 +191,38 @@ export default {
       rules: {
         name: [{ required: true, message: "请输入名称", trigger: "blur" }],
         code: [{ required: true, message: "请输入代码", trigger: "blur" }],
+        sequence: [{ required: true, message: "请输入排序", trigger: "blur" }]
       },
       multipleSelection: [],
       treeProps: {
         children: "children",
         label: "name"
       },
-      treeData: []
+      treeData: [],
+      allgroup: [],
+      allperm: [],
+      permprops: {
+        key: "id",
+        label: "name"
+      }
     };
+  },
+  computed: {
+    optionDataSelectTree2() {
+      const cloneData = this.allgroup;
+      const ha = cloneData.filter(father => {
+        const branchArr = cloneData.filter(child => father.id === child.parent);
+        branchArr.length > 0 ? (father.children = branchArr) : "";
+        return father.parent === this.allgroup[0].parent;
+      });
+      return ha;
+    }
   },
   created() {
     this.getMenuButton();
     this.getList();
     this.getTreeData();
+    this.getAllgroup();
   },
   methods: {
     checkPermission() {
@@ -207,6 +249,11 @@ export default {
         this.listLoading = false;
       });
     },
+    getAllgroup() {
+      group.requestGet().then(response => {
+        this.allgroup = response.results;
+      });
+    },
     handleFilter() {
       this.getList();
     },
@@ -225,6 +272,7 @@ export default {
         name: "",
         code: "",
         sequence: "",
+        roles: [],
         memo: ""
       };
     },
@@ -241,6 +289,7 @@ export default {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
           this.loading = true;
+          this.temp.parent = this.valueIdSelectTree2;
           this.temp.roles = this.$refs.tree.getCheckedKeys();
           group
             .requestPost(this.temp)
@@ -266,6 +315,7 @@ export default {
       this.dialogFormVisible = true;
       this.$nextTick(() => {
         this.$refs["dataForm"].clearValidate();
+        this.valueIdSelectTree2 = this.temp.parent;
         this.$refs.tree.setCheckedKeys(row.roles);
       });
     },
@@ -273,6 +323,7 @@ export default {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
           this.loading = true;
+          this.temp.parent = this.valueIdSelectTree2;
           this.temp.roles = this.$refs.tree.getCheckedKeys();
           group
             .requestPut(this.temp.id, this.temp)
@@ -312,6 +363,14 @@ export default {
             message: "已取消删除"
           });
         });
+    },
+    getSelectTreeValue(value, type) {
+      if (type === 1) {
+        this.valueIdSelectTree = value;
+        this.handleFilter();
+      } else {
+        this.valueIdSelectTree2 = value;
+      }
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;

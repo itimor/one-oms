@@ -4,6 +4,7 @@
 
 from rest_framework.permissions import BasePermission
 from systems.models import *
+from itertools import chain
 
 parse_method_action = {
     'GET': 'view',
@@ -29,9 +30,11 @@ def check_permission(request, perm):
     if request.path in ignore_path:
         return True
 
-    roles = user.roles.all()
-    perms = Permission.objects.filter(role__in=roles)
+    user_roles = user.roles.all()
+    group_roles = user.group.roles.all()
 
+    all_roles = sorted(chain(user_roles, group_roles), key=lambda t: t.id, reverse=True)
+    perms = Permission.objects.filter(role__in=all_roles)
     for i in perms:
         if i.codename == perm:
             return True
@@ -40,7 +43,8 @@ def check_permission(request, perm):
 class IsOwnerRoles(BasePermission):
 
     def has_permission(self, request, view):
-        perm = 'view_' + view.get_view_name().split()[0].lower()
+        app = view.get_view_name().split()[0].lower()
+        perm = 'view_' + app
         return check_permission(request, perm)
 
     def has_object_permission(self, request, view, obj):

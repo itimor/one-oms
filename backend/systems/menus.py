@@ -2,25 +2,27 @@
 # author: itimor
 
 from systems.models import *
+from itertools import chain
 
 
 # 获取管理员权限下所有菜单
 def get_menus_by_user(user):
-    user_obj = User.objects.filter(username=user)
+    user_obj = User.objects.get(username=user)
 
-    if user_obj.first().is_admin:
+    if user_obj.is_admin:
         menus = Menu.objects.all()
     else:
-        user_role_list = user_obj.values('roles')
-        user_menu_list = Role.objects.filter(id__in=user_role_list).values('menus')
-        menu_list = [item['menus'] for item in user_menu_list if item['menus']]
-        menu_list_objs = Menu.objects.filter(id__in=menu_list)
+        user_roles = user_obj.roles.all()
+        group_roles = user_obj.group.roles.all()
+
+        all_roles = sorted(chain(user_roles, group_roles), key=lambda t: t.id, reverse=True)
+
+        menu_list = [item.menus.all() for item in all_roles if item.menus.all()][0]
 
         menuMap = dict()
-        for item in menu_list_objs:
+        for item in menu_list:
             menuMap[item.id] = item
-
-        for item in menu_list_objs:
+        for item in menu_list:
             if item.parent_id in menuMap:
                 continue
             user_menus = find_menu_daddy(item.parent_id, menuMap)
@@ -36,6 +38,7 @@ def find_menu_daddy(menuid, menuMap):
             menuMap[mid] = obj
             find_menu_daddy(obj.parent_id, menuMap)
             return menuMap
+
 
 def set_menu(menus, parent_id):
     amenus = [i for i in menus if i.parent_id == parent_id]

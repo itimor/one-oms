@@ -201,7 +201,8 @@ export default {
       },
       rules: {
         name: [{ required: true, message: "请输入名称", trigger: "blur" }],
-        code: [{ required: true, message: "请输入代码", trigger: "blur" }]
+        code: [{ required: true, message: "请输入代码", trigger: "blur" }],
+        sequence: [{ required: true, message: "请输入排序", trigger: "blur" }],
       },
       multipleSelection: [],
       treeProps: {
