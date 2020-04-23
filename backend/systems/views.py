@@ -21,6 +21,14 @@ class UserViewSet(BulkModelMixin):
     ordering_fields = ['username', 'status']
 
 
+class GroupViewSet(BulkModelMixin):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    search_fields = ['name']
+    filter_fields = ['name']
+    ordering_fields = ['parent_id', 'sequence']
+
+
 class RoleViewSet(BulkModelMixin):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer

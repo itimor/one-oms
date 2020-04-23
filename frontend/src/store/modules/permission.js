@@ -169,8 +169,9 @@ function generateRouter(item, isParent) {
 export const componentsMap = {
   // sys
   menu: () => import('@/views/sys/menu'), // 菜单
-  user: () => import('@/views/sys/user'), // 后台管理员
-  role: () => import('@/views/sys/role'), // 后台角色
+  user: () => import('@/views/sys/user'), // 用户
+  group: () => import('@/views/sys/group'), // 用户组
+  role: () => import('@/views/sys/role'), // 角色
   icon: () => import('@/views/svg-icons/index'), // 图标管理
 
   // tool

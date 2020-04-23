@@ -2,7 +2,7 @@
 # author: timor
 
 from django.db import models
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, Group, GroupManager
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser
 from systems.models import *
 from common.models import BaseModel
@@ -23,8 +23,7 @@ operate_type = (
 
 
 class Menu(BaseModel):
-    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, default='0',
-                               verbose_name='父级菜单')
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, verbose_name='父级菜单')
     name = models.CharField(max_length=32, verbose_name='菜单名称')
     code = models.CharField(max_length=32, verbose_name='菜单代码')
     curl = models.CharField(max_length=101, verbose_name='菜单URL')
@@ -45,8 +44,7 @@ class Menu(BaseModel):
 
 
 class Role(BaseModel):
-    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, default='0',
-                               verbose_name='父级角色')
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, verbose_name='父级角色')
     name = models.CharField(max_length=32, unique=True, verbose_name='名称')
     code = models.CharField(max_length=32, unique=True, verbose_name='代码')
     sequence = models.SmallIntegerField(default=0, verbose_name='排序值')
@@ -61,14 +59,38 @@ class Role(BaseModel):
         verbose_name_plural = verbose_name
 
 
+class Group(BaseModel, Group):
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, verbose_name='父级角色')
+    code = models.CharField(max_length=32, unique=True, verbose_name='代码')
+    sequence = models.SmallIntegerField(default=0, verbose_name='排序值')
+    roles = models.ManyToManyField(
+        Role,
+        verbose_name='roles',
+        blank=True,
+        related_name="group_set",
+        related_query_name="group",
+    )
+
+    def __str__(self):
+        return "{parent}{name}".format(name=self.name, parent="%s-->" % self.parent.name if self.parent else '')
+
+    class Meta:
+        verbose_name = '用户组'
+        verbose_name_plural = verbose_name
+
+    objects = GroupManager()  # 创建用户
+
+
 class PermissionsMixin(models.Model):
-    # groups = models.ManyToManyField(
-    #     Group,
-    #     verbose_name='groups',
-    #     blank=True,
-    #     related_name="user_set",
-    #     related_query_name="user",
-    # )
+    group = models.ForeignKey(
+        Group,
+        verbose_name='group',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="user_set",
+        related_query_name="user",
+    )
     roles = models.ManyToManyField(
         Role,
         verbose_name='roles',

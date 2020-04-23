@@ -5,16 +5,17 @@
 from django.conf.urls import url, include
 from rest_framework import routers
 from rest_auth.views import PasswordChangeView
-from systems.views import UserViewSet, RoleViewSet, PermissionViewSet, MenuViewSet, AuthViewSet, ObtainJSONWebToken
+from systems.views import UserViewSet, GroupViewSet, RoleViewSet, PermissionViewSet, MenuViewSet, AuthViewSet, \
+    ObtainJSONWebToken
 
 router = routers.DefaultRouter()
 
 router.register(r'user', UserViewSet)
+router.register(r'group', GroupViewSet)
 router.register(r'role', RoleViewSet)
 router.register(r'perm', PermissionViewSet)
 router.register(r'menu', MenuViewSet)
 router.register(r'auth', AuthViewSet)
-
 
 urlpatterns = [
     url(r'^auth/changepwd/', PasswordChangeView.as_view(), name='changepwd'),

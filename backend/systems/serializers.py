@@ -37,6 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
         roles = validated_data.pop('roles')
         instance.username = validated_data.get('username', instance.username)
         instance.realname = validated_data.get('realname', instance.realname)
+        instance.group = validated_data.get('group', instance.group)
         instance.email = validated_data.get('email', instance.email)
         instance.avatar = validated_data.get('avatar', instance.avatar)
         instance.status = validated_data.get('status', instance.status)
@@ -50,18 +51,19 @@ class UserSerializer(serializers.ModelSerializer):
         return instance
 
 
-class RoleSerializer(serializers.ModelSerializer):
-    user_set = UserSerializer(many=True, read_only=True)
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = '__all__'
 
+
+class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = '__all__'
 
 
 class PermissionSerializer(serializers.ModelSerializer):
-    permissionrole = RoleSerializer(many=True, read_only=True)
-    user_set = UserSerializer(many=True, read_only=True)
-
     class Meta:
         model = Permission
         fields = '__all__'

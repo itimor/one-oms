@@ -45,27 +45,9 @@
       @selection-change="handleSelectionChange"
     >
       <el-table-column type="selection" width="55" />
-      <el-table-column label="用户名" prop="username"></el-table-column>
-      <el-table-column label="真实姓名" prop="realname"></el-table-column>
-      <!-- <el-table-column label="角色" prop="roles">
-        <template slot-scope="scope">
-          <el-tag v-for="item in scope.row.roles" :key="item.id" size="medium">{{item.name}}</el-tag>
-        </template>
-      </el-table-column>-->
-      <el-table-column label="头像" align="center">
-        <template slot-scope="scope">
-          <el-popover placement="top" width="200" trigger="hover">
-            <el-image :src="scope.row.avatar" fit="cover"></el-image>
-            <el-avatar slot="reference" :src="scope.row.avatar"></el-avatar>
-          </el-popover>
-        </template>
-      </el-table-column>
-      <el-table-column label="状态" prop="status" sortable="custom">
-        <template slot-scope="scope">
-          <el-tag v-if="scope.row.status" type="success">启用</el-tag>
-          <el-tag v-else type="danger">禁用</el-tag>
-        </template>
-      </el-table-column>
+      <el-table-column label="名称" prop="name"></el-table-column>
+      <el-table-column label="排序" prop="sequence"></el-table-column>
+      <el-table-column label="备注" prop="memo"></el-table-column>
       <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
         <template slot-scope="{ row }">
           <el-button-group v-show="!row.is_admin">
@@ -107,34 +89,17 @@
         label-width="80px"
         style="width: 400px; margin-left:50px;"
       >
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="temp.username" :disabled="dialogStatus === 'create' ? false : true" />
+        <el-form-item label="名称" prop="name">
+          <el-input v-model="temp.name" :disabled="dialogStatus === 'create' ? false : true" />
         </el-form-item>
-        <el-form-item v-if="dialogStatus === 'create' ? true : false" label="密码" prop="password">
-          <el-input
-            v-model="temp.password"
-            placeholder="6-20位"
-            show-password
-            minlength="6"
-            maxlength="20"
-          />
+        <el-form-item label="代码" prop="code">
+          <el-input v-model="temp.code" />
         </el-form-item>
-        <el-form-item label="真实姓名" prop="realname">
-          <el-input v-model="temp.realname" />
+        <el-form-item label="排序值" prop="sequence">
+          <el-input v-model="temp.sequence" />
         </el-form-item>
-        <el-form-item label="真实姓名" prop="realname">
-          <el-select v-model="temp.group" clearable placeholder="请选择用户组">
-            <el-option v-for="item in groups" :key="item.id" :label="item.name" :value="item.id"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="头像" prop="avatar">
-          <el-input v-model="temp.avatar" />
-        </el-form-item>
-        <el-form-item label="介绍" prop="memo">
+        <el-form-item label="备注" prop="memo">
           <el-input v-model="temp.memo" />
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-switch v-model="temp.status" active-color="#13ce66" inactive-color="#ff4949"></el-switch>
         </el-form-item>
         <el-form-item label="用户角色" prop="roles">
           <el-tree
@@ -162,7 +127,7 @@
 </template>
 
 <script>
-import { user, group, role, auth } from "@/api/all";
+import { group, role, auth } from "@/api/all";
 import Pagination from "@/components/Pagination";
 import {
   checkAuthAdd,
@@ -172,7 +137,7 @@ import {
 } from "@/utils/permission";
 
 export default {
-  name: "user",
+  name: "group",
   components: { Pagination },
   data() {
     return {
@@ -201,32 +166,20 @@ export default {
         create: "添加"
       },
       rules: {
-        username: [
-          { required: true, message: "请输入用户名", trigger: "blur" }
-        ],
-        password: [
-          {
-            min: 6,
-            max: 20,
-            required: true,
-            message: "长度在 6 到 20 个字符",
-            trigger: "blur"
-          }
-        ]
+        name: [{ required: true, message: "请输入名称", trigger: "blur" }],
+        code: [{ required: true, message: "请输入代码", trigger: "blur" }],
       },
       multipleSelection: [],
       treeProps: {
         children: "children",
         label: "name"
       },
-      treeData: [],
-      groups: []
+      treeData: []
     };
   },
   created() {
     this.getMenuButton();
     this.getList();
-    this.getGroupList();
     this.getTreeData();
   },
   methods: {
@@ -238,7 +191,7 @@ export default {
     },
     getMenuButton() {
       auth
-        .requestMenuButton("user")
+        .requestMenuButton("group")
         .then(response => {
           this.operationList = response.results;
         })
@@ -248,15 +201,10 @@ export default {
     },
     getList() {
       this.listLoading = true;
-      user.requestGet(this.listQuery).then(response => {
+      group.requestGet(this.listQuery).then(response => {
         this.list = response.results;
         this.total = response.count;
         this.listLoading = false;
-      });
-    },
-    getGroupList() {
-      group.requestGet().then(response => {
-        this.groups = response.results;
       });
     },
     handleFilter() {
@@ -274,14 +222,9 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        username: "",
-        password: "",
-        realname: "",
-        group: "",
-        avatar:
-          "http://m.imeitou.com/uploads/allimg/2017110610/b3c433vwhsk.jpg",
-        roles: [],
-        status: true,
+        name: "",
+        code: "",
+        sequence: "",
         memo: ""
       };
     },
@@ -299,7 +242,7 @@ export default {
         if (valid) {
           this.loading = true;
           this.temp.roles = this.$refs.tree.getCheckedKeys();
-          user
+          group
             .requestPost(this.temp)
             .then(response => {
               this.dialogFormVisible = false;
@@ -331,7 +274,7 @@ export default {
         if (valid) {
           this.loading = true;
           this.temp.roles = this.$refs.tree.getCheckedKeys();
-          user
+          group
             .requestPut(this.temp.id, this.temp)
             .then(() => {
               this.dialogFormVisible = false;
@@ -355,7 +298,7 @@ export default {
         type: "warning"
       })
         .then(() => {
-          user.requestDelete(row.id).then(() => {
+          group.requestDelete(row.id).then(() => {
             this.$message({
               message: "删除成功",
               type: "success"
@@ -389,7 +332,7 @@ export default {
       })
         .then(() => {
           const ids = this.multipleSelection.map(x => x.id);
-          user.requestBulkDelete(ids).then(response => {
+          group.requestBulkDelete(ids).then(response => {
             console.log(response.results);
             this.getList();
           });
