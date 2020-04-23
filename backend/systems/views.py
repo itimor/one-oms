@@ -5,7 +5,6 @@ from systems.serializers import *
 from common.views import ModelViewSet, FKModelViewSet, JsonResponse, BulkModelMixin
 from rest_framework.decorators import action
 from systems.menus import get_menus_by_user, set_menu
-from systems.permissions import IsOwnerRoles
 from common import status
 from collections import OrderedDict
 from rest_framework_jwt.serializers import JSONWebTokenSerializer
@@ -14,7 +13,7 @@ from rest_framework_jwt.settings import api_settings
 from datetime import datetime
 
 
-class UserViewSet(FKModelViewSet):
+class UserViewSet(BulkModelMixin):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     search_fields = ['username']
@@ -22,7 +21,7 @@ class UserViewSet(FKModelViewSet):
     ordering_fields = ['username', 'status']
 
 
-class RoleViewSet(ModelViewSet):
+class RoleViewSet(BulkModelMixin):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
     search_fields = ['name']
@@ -38,7 +37,7 @@ class PermissionViewSet(ModelViewSet):
     ordering_fields = ['name']
 
 
-class MenuViewSet(ModelViewSet):
+class MenuViewSet(BulkModelMixin):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
     search_fields = ['name']
