@@ -123,9 +123,16 @@
           <el-input v-model="temp.realname" />
         </el-form-item>
         <el-form-item label="用户组" prop="realname">
-          <el-select v-model="temp.group" clearable placeholder="请选择用户组">
-            <el-option v-for="item in groups" :key="item.id" :label="item.name" :value="item.id"></el-option>
-          </el-select>
+          <SelectTree
+            v-model.number="temp.group"
+            type="number"
+            :props="propsSelectTree"
+            :options="optionDataSelectTree2"
+            :value="valueIdSelectTree2"
+            :clearable="true"
+            :accordion="true"
+            @getValue="getSelectTreeValue($event, 2)"
+          />
         </el-form-item>
         <el-form-item label="头像" prop="avatar">
           <el-input v-model="temp.avatar" />
@@ -164,6 +171,8 @@
 <script>
 import { user, group, role, auth } from "@/api/all";
 import Pagination from "@/components/Pagination";
+import SelectTree from "@/components/TreeSelect";
+
 import {
   checkAuthAdd,
   checkAuthDel,
@@ -173,9 +182,19 @@ import {
 
 export default {
   name: "user",
-  components: { Pagination },
+  components: { Pagination, SelectTree },
   data() {
     return {
+      valueIdSelectTree: 0,
+      valueIdSelectTree2: 0,
+      propsSelectTree: {
+        value: "id",
+        label: "name",
+        children: "children",
+        placeholder: "父级"
+      },
+      propsSelectlist: [],
+      propsSelectlist2: [{ id: 0, parent: -1, name: "顶级" }],
       operationList: [],
       permissionList: {
         add: false,
@@ -220,8 +239,19 @@ export default {
         label: "name"
       },
       treeData: [],
-      groups: []
+      allgroup: []
     };
+  },
+  computed: {
+    optionDataSelectTree2() {
+      const cloneData = this.allgroup;
+      const ha = cloneData.filter(father => {
+        const branchArr = cloneData.filter(child => father.id === child.parent);
+        branchArr.length > 0 ? (father.children = branchArr) : "";
+        return father.parent === this.allgroup[0].parent;
+      });
+      return ha;
+    }
   },
   created() {
     this.getMenuButton();
@@ -256,7 +286,7 @@ export default {
     },
     getGroupList() {
       group.requestGet().then(response => {
-        this.groups = response.results;
+        this.allgroup = response.results;
       });
     },
     handleFilter() {
@@ -298,6 +328,7 @@ export default {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
           this.loading = true;
+          this.temp.group = this.valueIdSelectTree2;
           this.temp.roles = this.$refs.tree.getCheckedKeys();
           user
             .requestPost(this.temp)
@@ -323,6 +354,7 @@ export default {
       this.dialogFormVisible = true;
       this.$nextTick(() => {
         this.$refs["dataForm"].clearValidate();
+        this.valueIdSelectTree2 = this.temp.group;
         this.$refs.tree.setCheckedKeys(row.roles);
       });
     },
@@ -330,6 +362,7 @@ export default {
       this.$refs["dataForm"].validate(valid => {
         if (valid) {
           this.loading = true;
+          this.temp.group = this.valueIdSelectTree2;
           this.temp.roles = this.$refs.tree.getCheckedKeys();
           user
             .requestPut(this.temp.id, this.temp)
@@ -369,6 +402,14 @@ export default {
             message: "已取消删除"
           });
         });
+    },
+    getSelectTreeValue(value, type) {
+      if (type === 1) {
+        this.valueIdSelectTree = value;
+        this.handleFilter();
+      } else {
+        this.valueIdSelectTree2 = value;
+      }
     },
     handleSelectionChange(val) {
       this.multipleSelection = val;
