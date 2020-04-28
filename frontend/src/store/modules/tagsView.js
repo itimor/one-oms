@@ -6,15 +6,17 @@ const state = {
 const mutations = {
   ADD_VISITED_VIEW: (state, view) => {
     if (state.visitedViews.some(v => v.path === view.path)) return
-    state.visitedViews.push(
-      Object.assign({}, view, {
-        title: view.meta.title || 'no-name'
-      })
-    )
+      if (!view.meta.hidden) {
+        state.visitedViews.push(
+          Object.assign({}, view, {
+            title: view.meta.title || 'no-name'
+          })
+        )
+      }
   },
   ADD_CACHED_VIEW: (state, view) => {
     if (state.cachedViews.includes(view.name)) return
-    if (!view.meta.noCache) {
+    if (!view.meta.noCache & !view.meta.hidden) {
       state.cachedViews.push(view.name)
     }
   },
@@ -28,13 +30,8 @@ const mutations = {
     }
   },
   DEL_CACHED_VIEW: (state, view) => {
-    for (const i of state.cachedViews) {
-      if (i === view.name) {
-        const index = state.cachedViews.indexOf(i)
-        state.cachedViews.splice(index, 1)
-        break
-      }
-    }
+    const index = state.cachedViews.indexOf(view.name)
+    index > -1 && state.cachedViews.splice(index, 1)
   },
 
   DEL_OTHERS_VISITED_VIEWS: (state, view) => {
@@ -43,12 +40,12 @@ const mutations = {
     })
   },
   DEL_OTHERS_CACHED_VIEWS: (state, view) => {
-    for (const i of state.cachedViews) {
-      if (i === view.name) {
-        const index = state.cachedViews.indexOf(i)
-        state.cachedViews = state.cachedViews.slice(index, index + 1)
-        break
-      }
+    const index = state.cachedViews.indexOf(view.name)
+    if (index > -1) {
+      state.cachedViews = state.cachedViews.slice(index, index + 1)
+    } else {
+      // if index = -1, there is no cached tags
+      state.cachedViews = []
     }
   },
 

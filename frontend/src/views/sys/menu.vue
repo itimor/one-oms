@@ -48,18 +48,18 @@
       <el-table-column label="菜单代码" prop="code"></el-table-column>
       <el-table-column label="排序值" prop="sequence"></el-table-column>
       <el-table-column label="菜单类型" prop="type">
-        <template slot-scope="scope">
-          <span>{{ scope.row.type | menuTypeFilter }}</span>
+        <template slot-scope="{ row }">
+          <span>{{ row.type | menuTypeFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作类型" prop="operate">
-        <template slot-scope="scope">
-          <span>{{ scope.row.operate | operateTypeFilter }}</span>
+        <template slot-scope="{ row }">
+          <span>{{ row.operate | operateTypeFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column label="菜单状态" prop="status">
-        <template slot-scope="scope">
-          <span>{{scope.row.status}}</span>
+        <template slot-scope="{ row }">
+          <span>{{row.status}}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
@@ -157,15 +157,22 @@
             inactive-color="#ff4949">
           </el-switch>
         </el-form-item>
-                <el-form-item label="隐藏菜单" prop="hidden">
+        <el-form-item label="是否缓存" prop="no_cache">
+          <el-switch
+            v-model="temp.no_cache"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+          </el-switch>
+        </el-form-item>
+        <el-form-item label="隐藏菜单" prop="hidden">
           <el-switch
             v-model="temp.hidden"
             active-color="#13ce66"
             inactive-color="#ff4949">
           </el-switch>
         </el-form-item>
-        <el-form-item label="备注" prop="memo">
-          <el-input v-model="temp.memo"/>
+        <el-form-item label="激活菜单" prop="active_menu">
+          <el-input v-model="temp.active_menu"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -319,8 +326,9 @@
           type: 2,
           operate: 'none',
           status: true,
+          no_cache: true,
           hidden: false,
-          memo: '',
+          active_menu: '',
           parent: 0
         }
       },

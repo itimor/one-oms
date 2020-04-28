@@ -31,7 +31,9 @@ export default function checkPermission(value) {
  * @example see @/views/permission/directive.vue
  */
 export function checkAuth(arr, value) {
-  const hasPermission = arr.includes(value)
+  const permissionarr = arr
+  const permissionvalue = value
+  const hasPermission = permissionarr.includes(permissionvalue)
   if (!hasPermission) {
     return false
   }

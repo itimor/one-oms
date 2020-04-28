@@ -2,7 +2,7 @@ import Request from '@/api/common'
 
 // auth
 import * as auths from '@/api/auths'
-export const auth = auths
+export const auth = auths 
 
 // systems
 export const user = new Request('/sys/user/')

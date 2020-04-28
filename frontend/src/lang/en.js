@@ -1,4 +1,6 @@
 export default {
+  systemTitle: 'OMS',
+  
   route: {
     dashboard: 'Dashboard',
     sys: 'sysManager',
@@ -10,9 +12,21 @@ export default {
     tool: 'tool',
     audit: 'audit',
     test: 'testManager',
+    workflow: 'workflow',
+    wfset: 'wfset',
+    wfconf: 'wfconf',
+    wftype: 'wftype',
+    ticket: 'ticket',
+    new_ticket: 'new_ticket',
+    u_ticket: 'u_ticket',
+    s_ticket: 's_ticket',
+    my_ticket: 'my_ticket',
+    todo_ticket: 'todo_ticket',
+    all_ticket: 'all_ticket',
     notice: 'notice',
     mailbot: 'mail bot',
     tgbot: 'telegram bot',
+    ComponentDemo: 'ComponentDemo',
   },
   navbar: {
     logOut: 'Log Out',

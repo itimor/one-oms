@@ -1,4 +1,6 @@
 export default {
+  systemTitle: '后台管理系统',
+
   route: {
     dashboard: '首页',
     sys: '系统管理',
@@ -10,9 +12,21 @@ export default {
     tool: '工具管理',
     audit: '审计日志',
     test: '测试页面',
+    workflow: '工作流',
+    wfset: '工作流设计',
+    wfconf: '工作流配置',
+    wftype: '工作流类型',
+    ticket: '工单系统',
+    new_ticket: '新建工单',
+    u_ticket: '编辑工单',
+    s_ticket: '处理工单',
+    my_ticket: '我创建的',
+    todo_ticket: '我的待办',
+    all_ticket: '所有工单',
     notice: '通知管理',
     mailbot: 'mail机器人',
     tgbot: 'tg机器人',
+    ComponentDemo: '组件例子',
   },
   navbar: {
     logOut: '退出登录',

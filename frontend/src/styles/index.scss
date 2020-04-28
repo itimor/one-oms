@@ -4,7 +4,6 @@
 @import './element-ui.scss';
 @import './sidebar.scss';
 @import './btn.scss';
-@import './comment.scss';
 
 body {
   height: 100%;
@@ -216,10 +215,24 @@ p img {
 
 .tips {
   color: rgba(128, 128, 128, 0.82);
+  font-size: 12px;
+  line-height: 70%;
 }
 
 .card-span-title {
   font-family: 'STXingkai', sans-serif; 
   font-weight: 900;
   font-size: 1.8em;
+}
+
+.ticket {
+  .el-card {
+    .ticket-title {
+      font-weight: 700;
+    }
+    margin-bottom: 20px !important;
+    .ticket-form {
+      margin: 20px 100px !important  ;
+    }
+  }
 }

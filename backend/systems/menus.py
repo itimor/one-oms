@@ -46,7 +46,6 @@ def set_menu(menus, parent_id):
     if len(amenus) == 0:
         return []
 
-    nocache = False
     all_menus = []
     for item in amenus:
         menu = {
@@ -54,7 +53,9 @@ def set_menu(menus, parent_id):
             'component': item.code,
             'name': item.code,
             'hidden': item.hidden,
-            'meta': {'title': item.code, 'icon': item.icon, 'nocache': nocache},
+            'meta': {'title': item.code, 'icon': item.icon, 'no_cache': item.no_cache, 'active_menu': item.active_menu,
+                     'hidden': item.hidden,
+                     },
             'children': []
         }
         if item.type == 3:
@@ -71,7 +72,10 @@ def set_menu(menus, parent_id):
                 'path': 'index',
                 'component': item.code,
                 'name': item.code,
-                'meta': {'title': item.code, 'icon': item.icon, 'nocache': nocache},
+                'hidden': item.hidden,
+                'meta': {'title': item.code, 'icon': item.icon, 'no_cache': item.no_cache,
+                         'active_menu': item.active_menu, 'hidden': item.hidden,
+                         },
                 'children': []
             }
             menu['children'].append(menu_index)
@@ -85,13 +89,13 @@ def set_menu(menus, parent_id):
 def init_menu(menu):
     if menu.type == 2:
         menu_list = [
-            {"name": "新增", "code": menu.code + "add", "curl": menu.curl + "/add", 'type': 3, "operate": "add",
+            {"name": "新增", "code": menu.code + "_add", "curl": menu.curl + "/add", 'type': 3, "operate": "add",
              "sequence": 10},
-            {"name": "删除", "code": menu.code + "del", "curl": menu.curl + "/del", 'type': 3, "operate": "del",
+            {"name": "删除", "code": menu.code + "_del", "curl": menu.curl + "/del", 'type': 3, "operate": "del",
              "sequence": 20},
-            {"name": "编辑", "code": menu.code + "update", "curl": menu.curl + "/update", 'type': 3, "operate": "update",
+            {"name": "编辑", "code": menu.code + "_update", "curl": menu.curl + "/update", 'type': 3, "operate": "update",
              "sequence": 30},
-            {"name": "查看", "code": menu.code + "view", "curl": menu.curl + "/view", 'type': 3, "operate": "view",
+            {"name": "查看", "code": menu.code + "_view", "curl": menu.curl + "/view", 'type': 3, "operate": "view",
              "sequence": 40},
         ]
 
