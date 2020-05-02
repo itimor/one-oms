@@ -353,3 +353,14 @@ export function removeClass(ele, cls) {
     ele.className = ele.className.replace(reg, ' ')
   }
 }
+
+export function GenDatetime(date) {
+  const Y = date.getFullYear().toString()
+  const M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1)
+  const D = date.getDate() + 1 < 10 ? '0' + date.getDate() : date.getDate()
+  const h = date.getHours() < 10 ? '0' + date.getHours() : date.getHours()
+  const m = date.getMinutes() + 1 < 10 ? '0' + date.getMinutes() : date.getMinutes()
+  const s = date.getSeconds() + 1 < 10 ? '0' + date.getSeconds() : date.getSeconds()
+  const ms = date.getMilliseconds().toString().length < 3 ? '0' + date.getMilliseconds() : date.getMilliseconds()
+  return Y + '-' + M + '-' + D + '-' + h + '-' + m + '-' + s + '-' + ms
+}

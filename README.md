@@ -18,6 +18,9 @@ npm install
 npm run dev
 ```
 
+### 账号
+`admin`  `123456`
+
 ## 相关权限菜单设置截图
 
 ### 新建 test 用户，并设置角色

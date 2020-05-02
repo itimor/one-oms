@@ -47,11 +47,6 @@
       <el-table-column type="selection" width="55" />
       <el-table-column label="用户名" prop="username"></el-table-column>
       <el-table-column label="真实姓名" prop="realname"></el-table-column>
-      <!-- <el-table-column label="角色" prop="roles">
-        <template slot-scope="{ row }">
-          <el-tag v-for="item in row.roles" :key="item.id" size="medium">{{item.name}}</el-tag>
-        </template>
-      </el-table-column> -->
       <el-table-column label="头像" align="center">
         <template slot-scope="{ row }">
           <el-popover placement="top" width="200" trigger="hover">
@@ -122,7 +117,7 @@
         <el-form-item label="真实姓名" prop="realname">
           <el-input v-model="temp.realname" />
         </el-form-item>
-        <el-form-item label="用户组" prop="realname">
+        <el-form-item label="分组" prop="realname">
           <SelectTree
             v-model.number="temp.group"
             type="number"
@@ -193,8 +188,6 @@ export default {
         children: "children",
         placeholder: "父级"
       },
-      propsSelectlist: [],
-      propsSelectlist2: [{ id: 0, parent: -1, name: "顶级" }],
       operationList: [],
       permissionList: {
         add: false,
@@ -349,7 +342,11 @@ export default {
       });
     },
     handleUpdate(row) {
-      this.temp = row;
+      // this.temp = Object.assign({},row, {
+      //   group: row.group.id,
+      //   roles: row.roles.map(a => a.id),
+      // });
+      this.temp = row
       this.dialogStatus = "update";
       this.dialogFormVisible = true;
       this.$nextTick(() => {

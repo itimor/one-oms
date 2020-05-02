@@ -17,7 +17,7 @@ class UserViewSet(BulkModelMixin):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     search_fields = ['username']
-    filter_fields = ['username']
+    filter_fields = ['username', 'group', 'roles']
     ordering_fields = ['username', 'status']
 
 
@@ -33,7 +33,7 @@ class RoleViewSet(BulkModelMixin):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
     search_fields = ['name']
-    filter_fields = ['name']
+    filter_fields = ['name', 'group']
     ordering_fields = ['parent_id', 'sequence']
 
 
@@ -76,7 +76,7 @@ class AuthViewSet(ModelViewSet):
             ip = request.META.get('REMOTE_ADDR', "")
 
         data = {'menus': menus, 'username': user_obj.username, 'avatar': user_obj.avatar, 'memo': user_obj.memo,
-                'ip': ip}
+                'ip': ip, 'user_id': user_obj.id}
         return JsonResponse(OrderedDict([
             ('results', data)
         ], code=status.HTTP_200_OK))
