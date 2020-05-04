@@ -59,8 +59,7 @@ class RoleSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(serializers.ModelSerializer):
-    user_set = UserSerializer(many=True, read_only=True)
-    role_set = RoleSerializer(many=True, read_only=True)
+    # user_set = UserSerializer(many=True, read_only=True)
 
     class Meta:
         model = Group
