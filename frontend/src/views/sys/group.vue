@@ -27,6 +27,7 @@
         >{{ "添加" }}</el-button>
         <el-button
           v-if="permissionList.del"
+          :disabled="multipleSelection.length<1"
           class="filter-item"
           type="danger"
           icon="el-icon-delete"
@@ -58,7 +59,7 @@
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="260" class-name="small-padding fixed-width">
-        <template slot-scope="{ row }" v-if="row.id !== 1">
+        <template slot-scope="{ row }" v-if="!row.id == 1">
           <el-button-group>
             <el-button
               v-if="permissionList.update"
@@ -66,12 +67,14 @@
               type="primary"
               @click="handleUpdate(row)"
             >{{ "编辑" }}</el-button>
-            <el-button
-              v-if="permissionList.del"
-              size="small"
-              type="danger"
-              @click="handleDelete(row)"
-            >{{ "删除" }}</el-button>
+            <el-popconfirm title="你确定要删除吗" @onConfirm="handleDelete(row)">
+              <el-button
+                slot="reference"
+                v-if="permissionList.del"
+                size="small"
+                type="danger"
+              >{{ "删除" }}</el-button>
+            </el-popconfirm>
           </el-button-group>
         </template>
       </el-table-column>
@@ -327,26 +330,13 @@ export default {
       });
     },
     handleDelete(row) {
-      this.$confirm("是否确定删除?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      })
-        .then(() => {
-          group.requestDelete(row.id).then(() => {
-            this.$message({
-              message: "删除成功",
-              type: "success"
-            });
-            this.getList();
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消删除"
-          });
+      group.requestDelete(row.id).then(() => {
+        this.$message({
+          message: "删除成功",
+          type: "success"
         });
+        this.getList();
+      });
     },
     getSelectTreeValue(value, type) {
       if (type === 1) {
@@ -360,14 +350,6 @@ export default {
       this.multipleSelection = val;
     },
     handleBatchDel() {
-      if (this.multipleSelection.length === 0) {
-        this.$message({
-          message: "未选中任何行",
-          type: "warning",
-          duration: 2000
-        });
-        return;
-      }
       this.$confirm("是否确定删除?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -386,7 +368,7 @@ export default {
             message: "已取消删除"
           });
         });
-    },
+    }
   }
 };
 </script>
