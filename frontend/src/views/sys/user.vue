@@ -325,7 +325,7 @@ export default {
         if (valid) {
           this.loading = true;
           this.temp.group = this.valueIdSelectTree2;
-          this.temp.roles = this.$refs.tree.getCheckedKeys();
+          this.temp.roles = this.$refs.tree.getCheckedKeys(true);
           user
             .requestPost(this.temp)
             .then(response => {
@@ -363,7 +363,7 @@ export default {
         if (valid) {
           this.loading = true;
           this.temp.group = this.valueIdSelectTree2;
-          this.temp.roles = this.$refs.tree.getCheckedKeys();
+          this.temp.roles = this.$refs.tree.getCheckedKeys(true);
           user
             .requestPut(this.temp.id, this.temp)
             .then(() => {

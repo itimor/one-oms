@@ -23,7 +23,7 @@ operate_type = {
 
 
 class Menu(BaseModel):
-    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, verbose_name='父级菜单')
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, verbose_name='父级')
     name = models.CharField(max_length=32, verbose_name='菜单名称')
     code = models.CharField(max_length=32, verbose_name='菜单代码')
     curl = models.CharField(max_length=101, verbose_name='菜单URL')
@@ -46,7 +46,7 @@ class Menu(BaseModel):
 
 
 class Role(BaseModel):
-    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, verbose_name='父级角色')
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, verbose_name='父级')
     name = models.CharField(max_length=32, unique=True, verbose_name='名称')
     code = models.CharField(max_length=32, unique=True, verbose_name='代码')
     sequence = models.SmallIntegerField(default=0, verbose_name='排序值')
@@ -62,7 +62,7 @@ class Role(BaseModel):
 
 
 class Group(BaseModel, Group):
-    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, verbose_name='父级角色')
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, verbose_name='父级')
     code = models.CharField(max_length=32, unique=True, verbose_name='代码')
     sequence = models.SmallIntegerField(default=0, verbose_name='排序值')
     roles = models.ManyToManyField(Role, verbose_name='roles', blank=True)
