@@ -88,10 +88,10 @@ class FalconApi(object):
 
 
 if __name__ == '__main__':
-    cli = FalconApi(endpoint="http://47.56.11.71:8080", user='root', password='v5benzro-gf*TY1k')
+    cli = FalconApi(endpoint="http://aaa:8080", user='root', password='123-3232*222')
     # 查询用户列表
     # r = cli.user.users.list()
-    node = ["aliyun-hk-yabo-prod-boce01", "aliyun-huabei-yabo-prod-boce04"]
+    node = ["aaa01"]
     # 查询 Counter eid
     query = {
         "q": node[0],
