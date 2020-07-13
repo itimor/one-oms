@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# author: timor
+# author: itimor
 
 from django.db import models
 from common.models import BaseModel

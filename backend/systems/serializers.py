@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# author: timor
+# author: itimor
 
 from systems.models import *
 from systems.menus import init_menu
@@ -59,7 +59,7 @@ class RoleSerializer(serializers.ModelSerializer):
 
 
 class GroupSerializer(serializers.ModelSerializer):
-    # user_set = UserSerializer(many=True, read_only=True)
+    user_set = UserSerializer(many=True, read_only=True)
 
     class Meta:
         model = Group

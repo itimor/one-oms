@@ -61,7 +61,6 @@ class ModelViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         # 不记录list get请求
         # self.watch_audit_log(request)
-
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
         if page is not None:

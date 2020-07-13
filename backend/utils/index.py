@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# author: timor
+# author: itimor
 
 from datetime import datetime, timedelta
 import time

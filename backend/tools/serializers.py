@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# author: timor
+# author: itimor
 
 from rest_framework import serializers
 from tools.models import *

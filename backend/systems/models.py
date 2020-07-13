@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# author: timor
+# author: itimor
 
 from django.db import models
 from django.contrib.auth.models import Permission, Group, GroupManager
@@ -23,7 +23,7 @@ operate_type = {
 
 
 class Menu(BaseModel):
-    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, verbose_name='父级')
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, verbose_name='父级菜单')
     name = models.CharField(max_length=32, verbose_name='菜单名称')
     code = models.CharField(max_length=32, verbose_name='菜单代码')
     curl = models.CharField(max_length=101, verbose_name='菜单URL')
@@ -40,13 +40,12 @@ class Menu(BaseModel):
         return "{parent}{name}".format(name=self.name, parent="%s-->" % self.parent.name if self.parent else '')
 
     class Meta:
-        ordering = ['id', ]
         verbose_name = '角色'
         verbose_name_plural = verbose_name
 
 
 class Role(BaseModel):
-    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, verbose_name='父级')
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, verbose_name='父级角色')
     name = models.CharField(max_length=32, unique=True, verbose_name='名称')
     code = models.CharField(max_length=32, unique=True, verbose_name='代码')
     sequence = models.SmallIntegerField(default=0, verbose_name='排序值')
@@ -62,16 +61,16 @@ class Role(BaseModel):
 
 
 class Group(BaseModel, Group):
-    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, verbose_name='父级')
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, verbose_name='父级角色')
     code = models.CharField(max_length=32, unique=True, verbose_name='代码')
     sequence = models.SmallIntegerField(default=0, verbose_name='排序值')
-    roles = models.ManyToManyField(Role, verbose_name='roles', blank=True)
+    roles = models.ManyToManyField(Role, verbose_name='roles', blank=True, )
 
     def __str__(self):
         return "{parent}{name}".format(name=self.name, parent="%s-->" % self.parent.name if self.parent else '')
 
     class Meta:
-        verbose_name = '用户组'
+        verbose_name = '分组'
         verbose_name_plural = verbose_name
 
     objects = GroupManager()  # 创建用户
@@ -143,6 +142,12 @@ class User(BaseModel, PermissionsMixin, AbstractBaseUser):
 
     @property
     def is_staff(self):
+        return self.is_admin
+
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
+
+    def has_module_perms(self, app_label):
         return self.is_admin
 
     def __str__(self):

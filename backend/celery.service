@@ -2,7 +2,11 @@
 Description=start celery worker
 
 [Service]
-ExecStart=/bin/bash -c 'cd /opt/projects/one-oms/backend; /root/.pyenv/versions/envoms/bin/celery -A core worker -B --loglevel=info -f /data/logs/celery.log'
+User=root
+Group=root
+WorkingDirectory=/data/app/one/backend
+ExecStartPre=-/bin/mkdir -p /data/logs
+ExecStart=/bin/bash -c '/root/.pyenv/versions/envoms/bin/celery -A celery_tasks.celery worker -B -l info -f /data/logs/celery.log'
 #非正常dead，自动重启
 Restart=on-failure
 #3秒后启动

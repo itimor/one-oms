@@ -4,11 +4,13 @@
 import platform
 from .base import *
 
-os_type = platform.system()
-
-if os_type == 'Windows':
+if platform.system() == 'Windows':
     print('进入 dev ')
     from .dev import *
 else:
-    print('进入 prod ')
-    from .prod import *
+    if platform.node() == "xxoo":
+        print('进入 test ')
+        from .test import *
+    else:
+        print('进入 prod ')
+        from .prod import *
