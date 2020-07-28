@@ -5,7 +5,6 @@ import sys
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-from omsBackend.settings import MAIL_ACOUNT
 
 # 设置服务器名称、用户名、密码以及邮件后缀
 mail_host = MAIL_ACOUNT["mail_host"]

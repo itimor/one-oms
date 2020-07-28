@@ -1,22 +1,29 @@
-import asyncio
+import subprocess
 import time
+import sys
 
 
-async def first_fun(delay):
-    print('开始执行 first_fun 函数。')
-    await asyncio.sleep(delay)
-    print("*****" * delay)
-    print('first_fun 函数执行结束。')
-    return "*****" * delay
+# def run_shell(shell):
+#     cmd = subprocess.Popen(shell, stdin=subprocess.PIPE, stderr=subprocess.PIPE,
+#                            stdout=subprocess.PIPE, universal_newlines=True, shell=True, bufsize=1)
+#     # 实时输出
+#     while True:
+#         line = cmd.stdout.readline()
+#         print(line, end='')
+#         if subprocess.Popen.poll(cmd) == 0:  # 判断子进程是否结束
+#             break
+#     cmd.stdout.close()
+#     cmd.wait()
+#     return cmd.returncode
+
+def run_shell(shell):
+    cmd = subprocess.Popen(shell, stdin=subprocess.PIPE, stderr=sys.stderr, close_fds=True,
+                           stdout=sys.stdout, universal_newlines=True, shell=True, bufsize=1)
+    out, err = cmd.communicate()
+    errcode = cmd.returncode
+
+    return errcode, out, err
 
 
-async def main():
-    a = [1,2,3]
-    print(f"started at {time.strftime('%X')}")
-    for i in a:
-        print('=============')
-        asyncio.create_task(first_fun(i))
-    print(f"finished at {time.strftime('%X')}")
-
-
-asyncio.run(main())
+if __name__ == '__main__':
+    print(run_shell("ping -n 10 www.gogole.com"))

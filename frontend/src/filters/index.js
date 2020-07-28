@@ -78,73 +78,62 @@ export function operateTypeFilter(val) {
   return Map[val]
 }
 
-// 字段类型
-export function FieldTypeFilter(val) {
-  const Map = {
-    10: '字符串',
-    15: '整形',
-    20: '浮点型',
-    25: '布尔',
-    30: '日期',
-    35: '时间',
-    40: '日期时间',
-    45: '单选框',
-    50: '多选框',
-    55: '下拉列表',
-    60: '多选下拉列表',
-    65: '文本域',
-    70: '用户名',
-    75: '多选的用户名',
-  }
-  return Map[val]
-}
+// wechat 聊天列表时间
+export function chatTime(time, option = null) {
+  const d = new Date(time)
+  const now = Date.now()
 
-// 状态类型
-export function StateTypeFilter(val) {
-  const Map = {
-    0: '普通状态',
-    1: '初始状态',
-    2: '结束状态',
-  }
-  return Map[val]
-}
+  const diff = (now - d) / 1000
 
-// 流转类型
-export function TransitionTypeFilter(val) {
-  const Map = {
-    0: '常规流转',
-    1: '定时器流转',
+  if (diff < 30) {
+    return '刚刚'
+  } else if (diff < 3600) {
+    // less 1 hour
+    return Math.ceil(diff / 60) + '分钟前'
+  } else if (diff < 3600 * 24) {
+    return Math.ceil(diff / 3600) + '小时前'
+  } else if (diff < 3600 * 24 * 2) {
+    return '1天前'
   }
-  return Map[val]
-}
-
-// 属性类型
-export function AttributeTypeFilter(val) {
-  const Map = {
-    0: '草稿中',
-    1: '进行中',
-    2: '被退回',
-    3: '被撤销',
-    4: '已完成',
-    5: '已关闭',
+  if (option) {
+    return parseTime(time, option)
+  } else {
+    return (
+      d.getFullYear() +
+      '年' +
+      d.getMonth() +
+      1 +
+      '月' +
+      d.getDate() +
+      '日'
+    )
   }
-  return Map[val]
-}
-
-
-// 流转名称
-export function TransitionNameFilter(val) {
-  const Map = {
-    0: '保存',
-    1: '转交下一步',
-    2: '驳回',
-    3: '撤销',
-    4: '关闭',
-  }
-  return Map[val]
 }
 
 // 取第一个字母并大写
 export function AvatarFilter(val) {
   return val.substr(0, 1).toUpperCase()
+}
+
+// 按钮
+export function ASSET_STATUSFilter(val) {
+  const Map = {
+    1: '使用中',
+    2: '未使用',
+    3: '故障',
+    4: '报废'
+  }
+  return Map[val]
+}
+
+// 按钮
+export function ASSET_TYPEFilter(val) {
+  const Map = {
+    1: "物理机",
+    2: "虚拟机",
+    3: "容器",
+    4: "网络设备",
+    5: "其他设备"
+  }
+  return Map[val]
 }

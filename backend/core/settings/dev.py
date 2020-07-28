@@ -24,24 +24,6 @@ DATABASES = {
     }
 }
 
-# mysql
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'one',
-#         'USER': 'root',
-#         'PASSWORD': 'momo520',
-#         'HOST': '1.1.1.11',
-#         'OPTIONS': {
-#             "init_command": "SET foreign_key_checks=0;",
-#         }
-#     }
-# }
-
-# 加载 mysql
-# import pymysql
-# pymysql.install_as_MySQLdb()
-
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S",
     'DEFAULT_PAGINATION_CLASS': 'common.pagination.StandardResultsSetPagination',

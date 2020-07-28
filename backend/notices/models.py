@@ -5,8 +5,8 @@ from django.db import models
 from common.models import BaseModel
 
 notice_type = {
-    'mail': 'mail',
-    'telegram': 'telegram',
+    0: 'mail',
+    1: 'telegram',
 }
 
 
@@ -27,7 +27,7 @@ class MailBot(BaseModel):
 
 
 class TelegramBot(BaseModel):
-    type = models.CharField(max_length=10, choices=tuple(notice_type.items()), default=0, verbose_name='通知类型')
+    type = models.CharField(max_length=10, choices=tuple(notice_type.items()), default=1, verbose_name='通知类型')
     name = models.CharField(max_length=112, unique=True, verbose_name='名称')
     uid = models.CharField(max_length=112, verbose_name='账号id')
     token = models.CharField(max_length=112, verbose_name='token')
