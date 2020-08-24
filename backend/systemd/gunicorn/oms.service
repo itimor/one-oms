@@ -1,0 +1,16 @@
+[Unit]
+Description=uWSGI instance to serve one-oms
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/data/projects/one-ops/backend
+ExecStartPre=-/bin/mkdir -p /data/logs
+ExecStart=/root/.pyenv/versions/envops/bin/gunicorn --config /data/projects/one-ops/backend/systemd/gunicorn/config.py core.asgi:application
+Restart=on-failure
+KillSignal=SIGQUIT
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target

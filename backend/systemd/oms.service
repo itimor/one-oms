@@ -1,0 +1,18 @@
+[Unit]
+Description=uWSGI instance to serve one-oms
+
+[Service]
+Type=notify
+User=root
+Group=root
+WorkingDirectory=/data/projects/one-ops/backend
+ExecStartPre=-/bin/mkdir -p /data/logs
+ExecStart=/root/.pyenv/versions/envops/bin/uvicorn core.asgi:application --port 1688 --log-level info >/data/logs/oms/django.log
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+Restart=on-failure
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+[Install]
+WantedBy=multi-user.target
