@@ -7,7 +7,6 @@ from django.conf.urls.static import static
 from django.views.generic.base import TemplateView
 from core import settings
 
-
 urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
               [
                   # django管理后台
@@ -20,7 +19,7 @@ urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + \
                   url(r'api/notice/', include(('notices.urls', 'notices'), namespace="notices")),
               ]
 
-if settings.APP_ENV == 'prod':
+if settings.APP_ENV in ['prod', 'test']:
     from rest_framework.documentation import include_docs_urls
 
     urlpatterns += [
